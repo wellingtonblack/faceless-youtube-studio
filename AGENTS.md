@@ -42,11 +42,13 @@ Agents may collaborate through Git commits, issues, manifests and documented han
 
 ## Publishing safety
 The default YouTube upload state is `private`.
-Never implement automatic public publishing without an explicit opt-in configuration and human approval gate.
+Never implement automatic public publishing.
 
-Recommended environment behavior:
+Public publishing requires **both** `approvals.public_publish.approved = true` in the episode manifest **and** an explicit `--confirm-public` flag on the publish command. No environment variable or configuration file can replace either condition. (Decision 2026-10-03, see `docs/decision-log.md`.)
+
+Environment behavior:
 - `AUTO_UPLOAD=true` may upload privately.
-- `AUTO_PUBLISH=false` must remain the default.
+- `AUTO_PUBLISH` must be `false` or empty; any other value is a configuration error.
 
 ## Secrets
 Never commit API keys, OAuth client secrets, access tokens, refresh tokens, cookies or local credential files.
@@ -57,7 +59,8 @@ If a secret is found in tracked content, treat it as compromised and report it i
 Canonical lifecycle:
 `idea -> approved -> script -> storyboard -> assets -> voice -> clips -> edit -> qc -> upload_private -> approved_for_publish -> published -> measured`
 
-Agents must update the episode manifest when changing lifecycle status.
+Agents must update the episode manifest when changing lifecycle status. The manifest is the only place lifecycle status is stored.
+Human approval gates are recorded in the manifest's `approvals` object. Agents record approvals given by the human owner and never self-approve.
 
 ## File ownership
 - Strategic rules: `MASTER_RULES.md`, `docs/`

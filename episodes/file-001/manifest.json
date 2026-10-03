@@ -1,29 +1,55 @@
 {
+  "schema_version": 2,
   "episode_id": "file-001",
   "file_number": 1,
   "title": "Everyone Received the Same Message at 3:17 AM",
   "format": "short",
   "language": "en",
   "aspect_ratio": "9:16",
-  "target_duration_seconds": 35,
+  "target_duration_seconds": 33,
   "status": "script",
   "series": "The Impossible Files",
-  "lore_tags": ["03:17", "moon", "global-message", "anomaly"],
-  "script_path": "content/scripts/file-001-everyone-received-the-same-message-at-0317.md",
+  "lore_tags": ["03:17", "03:17-utc", "moon", "global-message", "we-saw-you-too", "anomaly"],
+  "script_path": "content/season-01/file-001.md",
   "storyboard_path": "production/storyboards/file-001-storyboard.md",
+  "characters": [],
   "voice": {
     "provider": "elevenlabs",
     "voice_id": null,
-    "preset": "archivist-v1"
+    "preset": null
   },
   "video": {
     "provider": "runway",
-    "model": null,
-    "scene_count": 9
+    "model": null
+  },
+  "approvals": {
+    "final_script": {"approved": false, "approved_by": null, "approved_at": null, "ref": null},
+    "recurring_characters": [],
+    "lore_additions": [
+      {
+        "id": "event-0317-utc",
+        "summary": "The FILE #001 message arrives at one global instant: 03:17 UTC. Local times and daylight differ around the world.",
+        "approved": true,
+        "approved_by": "wellingtonblack",
+        "approved_at": "2026-10-03",
+        "ref": "docs/proposals/2026-10-03-file-001-continuity.md#d1--0317-means-0317-utc"
+      },
+      {
+        "id": "second-message-we-saw-you-too",
+        "summary": "People who look at the Moon receive a second message: WE SAW YOU TOO. Unexplained.",
+        "approved": true,
+        "approved_by": "wellingtonblack",
+        "approved_at": "2026-10-03",
+        "ref": "docs/proposals/2026-10-03-file-001-continuity.md#d2--direct-consequence-for-looking"
+      }
+    ],
+    "final_qc": {"approved": false, "approved_by": null, "approved_at": null, "ref": null},
+    "public_publish": {"approved": false, "approved_by": null, "approved_at": null, "ref": null}
   },
   "publishing": {
     "youtube_privacy": "private",
-    "public_publish_approved": false,
+    "selfDeclaredMadeForKids": false,
+    "containsSyntheticMedia": true,
     "youtube_video_id": null,
     "published_at": null
   }

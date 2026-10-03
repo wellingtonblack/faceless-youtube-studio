@@ -88,9 +88,16 @@ npm run studio -- clips 001
 npm run studio -- compose 001
 npm run studio -- qc 001
 npm run studio -- upload 001 --privacy private
+npm run studio -- publish 001 --confirm-public
 ```
 
 or equivalent Python CLI.
+
+`upload` is private-only. `publish` is the only path to public visibility and requires **both**:
+- `approvals.public_publish.approved = true` (plus `final_qc` approved, status `approved_for_publish`, and an existing private `youtube_video_id`) in the manifest;
+- the explicit `--confirm-public` flag on that invocation.
+
+No environment variable can replace either condition.
 
 A later orchestration command may run approved stages:
 
@@ -121,19 +128,27 @@ measured
 
 Status transitions should be explicit and stored in the episode manifest.
 
+`status` is the latest stage the episode has entered; work in it may still be in progress. `approved` means the premise is greenlit, not that the script is final. Status never authorizes anything by itself: the schema requires the matching approvals (see `docs/migrations/2026-10-03-episode-manifest-v2.md`).
+
+The lifecycle status lives **only** in the manifest. Episode Markdown files must not keep their own status.
+
 ## Human approval gates
-Required approval gates:
-- final script;
-- first appearance/version of a recurring character;
-- substantial lore additions;
-- final video QC;
-- public publish.
+Required approval gates and their manifest fields (`approvals.*`):
+- final script → `final_script` (required before `storyboard`);
+- first appearance/version of a recurring character → `recurring_characters[]` (every ID in `characters` needs an approved entry);
+- substantial lore additions → `lore_additions[]`;
+- final video QC → `final_qc` (required before `approved_for_publish`);
+- public publish → `public_publish` (required before `approved_for_publish` and for any non-private visibility).
+
+Each approved gate records `approved_by`, `approved_at` and `ref` (where the decision is documented). Agents never set a gate to `true` on their own initiative; they only record approvals given by the human owner.
 
 ## YouTube integration policy
 Use OAuth 2.0.
 Default upload privacy: `private`.
 The pipeline must never assume public publishing.
-`AUTO_PUBLISH=false` is the default operational policy.
+`AUTO_PUBLISH` is not a publishing mechanism: it must stay `false`, and any other value is a configuration error. Public publishing only happens through the `publish` gate above.
+Every upload sets `selfDeclaredMadeForKids` and `containsSyntheticMedia` from the manifest.
+YouTube restricts uploads from unverified API projects to private. Until the API project is audited, the human owner may publish in YouTube Studio and then record the result in the manifest.
 
 ## GitHub collaboration
 Agents coordinate through:
@@ -160,6 +175,12 @@ output/
 ```
 
 For durable large assets, evaluate Git LFS or external object storage later. The metadata, prompts and checksums should remain in Git.
+
+### Tracked asset record
+`episodes/<episode_id>/assets.json` is the committed record of every generated or licensed asset: the reproducibility fields below, plus `sha256` and, for music/SFX, `license`. `output/<episode_id>/build-manifest.json` is only a local build log and is not tracked.
+
+### Scenes
+The approved storyboard is the canonical scene list. Scenes are `## scene-NN` headings (`scene-01`, `scene-02`, … without gaps). Scene count is derived from it and is never stored in the manifest.
 
 ## Reproducibility
 For each generated asset, record when available:
