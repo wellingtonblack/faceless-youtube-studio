@@ -1,0 +1,30 @@
+{
+  "episode_id": "file-001",
+  "file_number": 1,
+  "title": "Everyone Received the Same Message at 3:17 AM",
+  "format": "short",
+  "language": "en",
+  "aspect_ratio": "9:16",
+  "target_duration_seconds": 35,
+  "status": "script",
+  "series": "The Impossible Files",
+  "lore_tags": ["03:17", "moon", "global-message", "anomaly"],
+  "script_path": "content/scripts/file-001-everyone-received-the-same-message-at-0317.md",
+  "storyboard_path": "production/storyboards/file-001-storyboard.md",
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": null,
+    "preset": "archivist-v1"
+  },
+  "video": {
+    "provider": "runway",
+    "model": null,
+    "scene_count": 9
+  },
+  "publishing": {
+    "youtube_privacy": "private",
+    "public_publish_approved": false,
+    "youtube_video_id": null,
+    "published_at": null
+  }
+}
