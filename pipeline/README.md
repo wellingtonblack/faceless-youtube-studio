@@ -1,0 +1,60 @@
+# Studio Pipeline
+
+This directory will contain the executable automation layer for The Impossible Files.
+
+## Planned modules
+
+```text
+pipeline/
+  cli/
+  providers/
+    images/
+    video/
+    voice/
+    youtube/
+  compose/
+  captions/
+  qc/
+  utils/
+```
+
+## Responsibilities
+- read/validate an episode manifest;
+- generate approved assets through provider adapters;
+- generate narration and SFX;
+- compose media with FFmpeg;
+- run automated QC;
+- upload final output to YouTube as private;
+- record provider/job/output metadata back to episode working files.
+
+## Non-goals
+- no automatic public publishing by default;
+- no secrets in repository files;
+- no direct dependency between episode manifests and one provider implementation;
+- no mass generation of generic videos without creative approval.
+
+## Implementation order
+1. Manifest validator.
+2. CLI skeleton.
+3. ElevenLabs voice adapter.
+4. FFmpeg composition utilities.
+5. Runway video adapter.
+6. Caption pipeline.
+7. QC module.
+8. YouTube OAuth/private-upload adapter.
+9. End-to-end `build` command.
+
+## Definition of done for v1
+Running a documented CLI command for `file-001` should eventually produce:
+
+```text
+output/file-001/
+  audio/narration.mp3
+  clips/scene-01.mp4
+  ...
+  captions/captions.srt
+  final/file-001-short.mp4
+  build-manifest.json
+```
+
+The upload command may then upload `file-001-short.mp4` as **private** only.
