@@ -2,6 +2,25 @@
 
 This directory will contain the executable automation layer for The Impossible Files.
 
+## Current foundation
+
+The first implementation uses Python's standard library only. This keeps manifest
+validation reproducible before provider SDKs are introduced. Run it from the
+repository root:
+
+```bash
+python -m pipeline episode validate file-001
+python -m pipeline episode validate file-001 --json
+python -m unittest pipeline.tests.test_manifest_validator
+```
+
+`episode validate` applies `schemas/episode.schema.json` and studio-specific
+safeguards: canonical episode IDs, repository-relative working-file paths, no
+secret-shaped manifest keys, and human approval before public privacy. The CLI
+also reserves the planned stage commands, but they intentionally make no provider
+calls until their adapters are implemented. The future `upload` surface accepts
+only `--privacy private` at this stage.
+
 ## Planned modules
 
 ```text
