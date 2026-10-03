@@ -1,0 +1,36 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Build/cache
+.dist/
+dist/
+build/
+.cache/
+.tmp/
+
+# Generated media
+output/
+renders/
+exports/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Credentials/tokens
+credentials.json
+token.json
+oauth*.json
+*.pem
+*.key
