@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://theimpossiblefiles.local/schemas/episode.schema.json",
+  "title": "The Impossible Files Episode Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "episode_id",
+    "file_number",
+    "title",
+    "format",
+    "language",
+    "aspect_ratio",
+    "status",
+    "publishing"
+  ],
+  "properties": {
+    "episode_id": {"type": "string", "pattern": "^file-[0-9]{3}$"},
+    "file_number": {"type": "integer", "minimum": 1},
+    "title": {"type": "string", "minLength": 1},
+    "format": {"enum": ["short", "long"]},
+    "language": {"type": "string", "default": "en"},
+    "aspect_ratio": {"enum": ["9:16", "16:9", "1:1"]},
+    "target_duration_seconds": {"type": "number", "minimum": 1},
+    "status": {
+      "enum": [
+        "idea",
+        "approved",
+        "script",
+        "storyboard",
+        "assets",
+        "voice",
+        "clips",
+        "edit",
+        "qc",
+        "upload_private",
+        "approved_for_publish",
+        "published",
+        "measured"
+      ]
+    },
+    "series": {"type": "string"},
+    "lore_tags": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "script_path": {"type": "string"},
+    "storyboard_path": {"type": "string"},
+    "voice": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider": {"type": "string"},
+        "voice_id": {"type": ["string", "null"]},
+        "preset": {"type": ["string", "null"]}
+      }
+    },
+    "video": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider": {"type": "string"},
+        "model": {"type": ["string", "null"]},
+        "scene_count": {"type": "integer", "minimum": 1}
+      }
+    },
+    "publishing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["youtube_privacy", "public_publish_approved"],
+      "properties": {
+        "youtube_privacy": {"enum": ["private", "unlisted", "public"]},
+        "public_publish_approved": {"type": "boolean"},
+        "youtube_video_id": {"type": ["string", "null"]},
+        "published_at": {"type": ["string", "null"], "format": "date-time"}
+      }
+    }
+  }
+}
