@@ -1,61 +1,76 @@
 # Brand Bible
 
-Versão: 0.1 — Fundação
+Versão: 1.0 — The Impossible Files
 
-## Status
-Nome final, identidade visual e assinatura ainda não foram definidos. Este documento registra os princípios que devem orientar a criação.
+## Nome de trabalho oficial
+**The Impossible Files**
+
+Status: aprovado como conceito principal. Antes do lançamento público, verificar disponibilidade final de nome/handle e possíveis conflitos relevantes.
+
+## Tagline
+**Every file contains something that should be impossible.**
 
 ## Personalidade da marca
-- Curiosa.
-- Inteligente sem ser acadêmica.
-- Cinematográfica.
 - Misteriosa.
+- Cinematográfica.
+- Inteligente sem ser acadêmica.
+- Curiosa.
 - Rápida.
 - Internacional.
+- Colecionável: cada episódio parece parte de um arquivo maior.
 
 ## Tom de voz
+- Inglês simples e internacional.
 - Frases curtas.
-- Inglês simples.
-- Sem enrolação.
+- Cold opens fortes.
+- Narração segura e intrigante.
 - Sem saudações longas.
-- Preferir perguntas, tensão e descoberta.
-- Evitar linguagem infantilizada, salvo se uma série específica pedir isso.
+- Sem explicar demais.
+- Evitar tom infantilizado.
+- Nunca sacrificar clareza por palavras sofisticadas.
 
 ## Sensação desejada
-O espectador deve sentir uma combinação de:
-- curiosidade;
-- urgência;
-- surpresa;
-- leve estranheza;
-- vontade de assistir até o final.
+O espectador deve sentir: curiosidade imediata → tensão crescente → surpresa → vontade de ver outro arquivo.
 
-## Naming — critérios
-O nome ideal deve ser:
-- curto;
-- fácil de pronunciar;
-- memorável;
-- disponível para expansão de marca;
-- não restrito a um único tema;
-- adequado para Shorts e vídeos longos.
+## Sistema verbal
+Expressões aprovadas para identidade:
+- `FILE #001`
+- `CLASSIFIED`
+- `RECOVERED FOOTAGE`
+- `ARCHIVE NOTE`
+- `ANOMALY DETECTED`
+- `CASE STATUS: UNKNOWN`
 
-## Direção visual inicial
-- Alto contraste.
-- Composições simples e legíveis em telas pequenas.
-- Um único ponto focal principal por frame quando possível.
-- Visual cinematográfico sem excesso de elementos.
-- Evitar aparência genérica de banco de imagens.
+Usar com moderação para não transformar todos os vídeos no mesmo template.
 
-## Thumbnail — regra inicial
-Para vídeos longos:
-- máximo de 1 ideia visual central;
-- pouco ou nenhum texto;
-- leitura instantânea;
-- contraste visual alto;
-- tensão, escala ou anomalia evidente.
+## Direção visual
+- Cinematográfica e ligeiramente inquietante.
+- Alto contraste e silhuetas legíveis em telas pequenas.
+- Um ponto focal dominante por frame sempre que possível.
+- Elementos de arquivo/classificação podem aparecer como overlay discreto.
+- Mistura de realismo estilizado com imagens impossíveis visualmente claras.
+- O impossível deve ser compreendido sem depender da legenda.
+
+## Símbolo da marca — direção inicial
+Criar um símbolo simples que sugira `arquivo + anomalia`, evitando clichês excessivos de agência secreta. Deve funcionar em avatar pequeno e como marca d'água.
+
+## Paleta — ainda em exploração
+A paleta final será definida após testes visuais. Priorizar fundo escuro/neutro com um acento reconhecível. Não fixar cores até aprovarmos os primeiros estudos de identidade.
+
+## Thumbnail para vídeos longos
+- 1 anomalia central.
+- Pouco ou nenhum texto.
+- Leitura instantânea.
+- Escala, perigo ou impossibilidade visual evidente.
+- Evitar círculos/setas genéricos salvo teste comprovado.
+
+## Shorts
+O primeiro frame deve funcionar como thumbnail informal: anomalia imediatamente legível, movimento ou pergunta visual.
 
 ## Não fazer
-- identidade parecida demais com canais existentes;
-- logos complexos;
-- excesso de tipografia;
-- thumbnails cheias de informação;
-- uso inconsistente de personagens ou paleta.
+- Copiar identidade de SCP, Backrooms ou outros universos existentes.
+- Depender de logos de agências reais.
+- Criar visual genérico de banco de imagens.
+- Reutilizar exatamente o mesmo template em massa.
+- Mudar aparência de personagens canônicos sem registro.
+- Apresentar ficção como notícia real.
