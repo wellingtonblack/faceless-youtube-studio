@@ -50,3 +50,4 @@ Nome real: não revelado.
 Gênero: ainda não fixado.
 Rosto: não revelado.
 Relação com The Archive: operador/investigador, a confirmar conforme a lore evoluir.
+Primeira aparição: ainda não definida. **Não aparece no FILE #001**: sem narração, voz ou visual (decisão 2026-10-03, `docs/proposals/2026-10-03-file-001-continuity.md` D4). A primeira aparição exige decisão canônica separada e entrada aprovada em `approvals.recurring_characters` no manifest do episódio.

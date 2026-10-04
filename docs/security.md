@@ -28,6 +28,8 @@ AUTO_PUBLISH=false
 
 Provider variable names may change during implementation; document the exact names in `.env.example` without values.
 
+`AUTO_PUBLISH` is not a publishing mechanism. It must stay `false`, and the pipeline treats any other value as a configuration error. Public publishing requires manifest approval plus the explicit `--confirm-public` flag.
+
 ## CI/CD
 Use GitHub repository/environment secrets for CI.
 Never echo secret values in logs.

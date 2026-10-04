@@ -30,6 +30,14 @@ Definir uma linguagem visual consistente para Shorts e vídeos longos, mesmo qua
 - Não mudar rosto, idade aparente, cabelo, proporções ou roupa principal sem decisão documentada.
 - Expressões devem reforçar a narrativa.
 
+## Interfaces, telas e mensagens
+Decisão 2026-10-03 (`docs/proposals/2026-10-03-file-001-continuity.md` D6):
+- Não imitar alertas de emergência reais, telas de emergência do iOS, alertas de emergência do Android ou qualquer sistema governamental.
+- Não reproduzir interfaces reconhecíveis de sistemas operacionais, apps ou emissoras reais.
+- Mensagens anômalas usam uma **interface fictícia própria** (anomaly-message interface).
+- Especificação: `docs/visual/anomaly-message-interface.md` (v1.0, aguardando aprovação do owner antes da etapa `assets` do FILE #001).
+- Overlays editoriais do arquivo (ex.: `FILE #001 — ARCHIVED`) devem ser visualmente distintos da interface dentro do universo.
+
 ## Câmera
 Preferências iniciais:
 - close para emoção;
