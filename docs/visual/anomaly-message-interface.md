@@ -89,7 +89,7 @@ All sounds must be original or licensed, and recorded in the asset record with s
 - Render the interface as a **2D graphic layer** (motion graphics or FFmpeg/editor overlay) and composite it onto phone screens or use it full-frame.
 - Never ask the video model to generate the screen text. Generated text is unreliable and can drift toward real OS UI.
 - Phones in generated clips should show a plain glowing or blank screen, which is replaced in compositing.
-- The pipeline currently has no explicit compositing/overlay stage; see "Open items".
+- Compositing/overlays belong to the edit stage and are owned by Codex; implementation is still pending. See `docs/file-001-handoff.md`.
 
 ## Archive overlay (editorial, different from the interface)
 Editorial overlays (`03:17:00 UTC` in scene-01, `FILE #001 — ARCHIVED` in scene-09) belong to the archive/narration layer, **not** to the in-world sender (D3). They must look different from this interface:
@@ -101,7 +101,7 @@ Editorial overlays (`03:17:00 UTC` in scene-01, `FILE #001 — ARCHIVED` in scen
 - [ ] Mock-up frames of messages 1 and 2 reviewed at phone size.
 - [ ] Side-by-side check against current iOS, Android and public-warning alert screens. Use private reference only; do not commit third-party screenshots.
 - [ ] Second-message tone reviewed against emergency attention signals.
-- [ ] Owner approval recorded in `docs/decision-log.md`.
+- [ ] Owner approval recorded in `approvals.visual_interface`, pinning this file hash; decision-log reference included.
 
 ## Open items
 - Brand symbol (`docs/brand-bible.md`) is not designed yet. It is not used in this interface.

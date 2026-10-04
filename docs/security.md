@@ -28,7 +28,7 @@ AUTO_PUBLISH=false
 
 Provider variable names may change during implementation; document the exact names in `.env.example` without values.
 
-`AUTO_PUBLISH` is not a publishing mechanism. It must stay `false`, and the pipeline treats any other value as a configuration error. Public publishing requires manifest approval plus the explicit `--confirm-public` flag.
+`AUTO_PUBLISH` is not a publishing mechanism. It must stay `false`, and the pipeline treats any other value as a configuration error. API public publishing requires manifest approval plus the explicit `--confirm-public` flag. Manual Studio publication requires the same manifest approvals and prior documented owner authorization; see the architecture.
 
 ## CI/CD
 Use GitHub repository/environment secrets for CI.

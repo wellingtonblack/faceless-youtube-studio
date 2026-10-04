@@ -6,13 +6,15 @@ These instructions apply to Codex and any other coding agent working in this rep
 
 ## Read before doing work
 Before modifying production code, prompts, episode data, or channel rules, read:
-1. `MASTER_RULES.md`
-2. `docs/brand-bible.md`
-3. `docs/story-bible.md`
-4. `docs/visual-bible.md`
-5. `docs/automation-architecture.md`
-6. `docs/security.md`
-7. the relevant episode manifest under `episodes/`
+1. `CLAUDE.md` (shared context; Claude-specific responsibilities do not transfer to Codex)
+2. `MASTER_RULES.md`
+3. `docs/brand-bible.md`
+4. `docs/story-bible.md`
+5. `docs/visual-bible.md`
+6. `docs/automation-architecture.md`
+7. `docs/security.md`
+8. the relevant episode manifest under `episodes/`
+9. all referenced episode files, `docs/decision-log.md`, and the episode handoff document
 
 If a task conflicts with `MASTER_RULES.md`, stop and flag the conflict instead of silently changing the project direction.
 
@@ -44,7 +46,7 @@ Agents may collaborate through Git commits, issues, manifests and documented han
 The default YouTube upload state is `private`.
 Never implement automatic public publishing.
 
-Public publishing requires **both** `approvals.public_publish.approved = true` in the episode manifest **and** an explicit `--confirm-public` flag on the publish command. No environment variable or configuration file can replace either condition. (Decision 2026-10-03, see `docs/decision-log.md`.)
+Automated API public publishing requires **both** `approvals.public_publish.approved = true` in the episode manifest **and** an explicit `--confirm-public` flag on the publish command. No environment variable or configuration file can replace either condition. (Decision 2026-10-03, see `docs/decision-log.md`.)
 
 Environment behavior:
 - `AUTO_UPLOAD=true` may upload privately.
@@ -79,3 +81,8 @@ Human approval gates are recorded in the manifest's `approvals` object. Agents r
 
 ## Quality bar
 Do not optimize only for automation speed. The project should not become mass-produced generic AI content. Automation exists to increase consistency and throughput while keeping scripts, visuals, editing and storytelling original.
+
+## Handoff and approval revisions
+Follow `docs/file-001-handoff.md` and manifest schema v3. Storyboard and interface approval are required before assets. Pin reviewed files by SHA-256; never transfer approval to edited files. An agent review is not human approval. A handoff identifies episode, source commit, inputs, output IDs/hashes, review reference, unresolved items and next responsible agent.
+
+Manual publication in YouTube Studio uses the same manifest gates, reviewed master and frozen metadata; record owner authorization before publishing and verify the actual result afterwards. `--confirm-public` is mandatory for CLI/API publication only.

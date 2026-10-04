@@ -1,11 +1,11 @@
 # Storyboard — FILE #001: Everyone Received the Same Message at 3:17 AM
 
-Version: 1.0 — **awaiting owner approval**
-Script: `content/season-01/file-001.md` v1.0
+Version: 1.1 — **awaiting owner approval**
+Script: `content/season-01/file-001.md` v1.1
 Format: Short, 9:16, 1080×1920, target ≈ 33 s
 
 ## Canonical scene list
-This file is the **source of truth for scene count**. Each `## scene-NN` heading is one scene. The pipeline derives the scene count from these headings. Clip outputs use the same IDs (`output/file-001/clips/scene-NN.mp4`), and the asset record (`episodes/file-001/assets.json`) references them.
+This file is the **source of truth for scene count**. Each `## scene-NN` heading is one scene. The pipeline derives the scene count from these headings. Each component uses a shot ID (`scene-NN-shot-MM`) and a take ID. Raw clips use `output/file-001/clips/scene-NN-shot-MM-take-TT.mp4`; assembled scene renders may use `scene-NN.mp4`. The asset record (`episodes/file-001/assets.json`) distinguishes them. See `docs/file-001-handoff.md` for the shot list and acceptance contracts.
 ## Global continuity
 - **Moon:** full Moon, same phase and surface detail in every shot. Normal size until scene-06.
 - **Time:** one instant, 03:17:00 UTC. Locations are generic (no landmarks, flags, real brands or readable real-world signage):
@@ -21,7 +21,7 @@ This file is the **source of truth for scene count**. Each `## scene-NN` heading
 
 ## scene-01
 **Time:** 0.0–3.8 s · **Beat:** hook
-**Picture:** three fast vertical panels or hard cuts (≤1.2 s each), all lighting up on the same frame:
+**Picture:** three simultaneous stacked panels in the vertical frame, all lighting up on the same frame (no sequential cuts):
 1. Night bedroom, phone on a bedside table lights the dark room; wall clock 11:17.
 2. Morning kitchen, phone on the counter lights up; sunlight; clock 8:17.
 3. Midday office, phone face-up on a desk lights up; bright windows; clock 12:17.
@@ -81,7 +81,7 @@ This file is the **source of truth for scene count**. Each `## scene-NN` heading
 **Time:** 19.5–24.5 s · **Beat:** consequence (causal link)
 **Picture:**
 1. The window man's phone sounds and lights in his hand (he looked).
-2. Hard cut: the **ground woman** at night, who kept her eyes on the ground, with her phone in her hand. **It stays dark.** She slowly looks up from it.
+2. Hard cut: the **ground woman** at night, who kept her eyes on the ground, with her phone in her hand. **It stays dark.** She keeps her gaze down on the phone throughout; she never looks toward the sky or the Moon.
 
 **Camera:** close-ups on hands and phones.
 **Narration:** "Only the people who looked got a second message."

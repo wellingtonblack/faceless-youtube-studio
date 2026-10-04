@@ -2,6 +2,8 @@
 
 This directory will contain the executable automation layer for The Impossible Files.
 
+Manifest contract: v3; see `docs/migrations/2026-10-03-episode-manifest-v3.md`. The tracked asset registry is validated against `schemas/assets.schema.json`.
+
 ## Current foundation
 
 The first implementation uses Python's standard library only. This keeps manifest
@@ -56,7 +58,7 @@ pipeline/
 - record provider/job/output metadata back to episode working files.
 
 ## Non-goals
-- no automatic public publishing by default;
+- no automatic public publishing;
 - no secrets in repository files;
 - no direct dependency between episode manifests and one provider implementation;
 - no mass generation of generic videos without creative approval.
@@ -78,7 +80,7 @@ Running a documented CLI command for `file-001` should eventually produce:
 ```text
 output/file-001/
   audio/narration.mp3
-  clips/scene-01.mp4
+  clips/scene-01-shot-01-take-01.mp4
   ...
   captions/captions.srt
   final/file-001-short.mp4
@@ -86,3 +88,5 @@ output/file-001/
 ```
 
 The upload command may then upload `file-001-short.mp4` as **private** only.
+
+Before provider execution, consume the handoff contracts in `docs/file-001-handoff.md`. Voice preflight remains provider-free; it only requires a current final-script approval and does not authorize other stages. General production additionally requires storyboard and interface gates. Compositing includes screen replacement, editorial overlays, sound mixing and captions.
