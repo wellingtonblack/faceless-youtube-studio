@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Sequence
 
 from pipeline.manifest_validator import validate_manifest_file
+from pipeline.providers.voice import plan_voice_generation
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
@@ -19,7 +20,9 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.command == "episode" and args.episode_command == "validate":
         return _validate_episode(args)
-    if args.command in {"voice", "clips", "compose", "qc", "build"}:
+    if args.command == "voice":
+        return _plan_voice(args)
+    if args.command in {"clips", "compose", "qc", "build"}:
         parser.error(f"'{args.command}' is reserved but not implemented yet")
     if args.command == "upload":
         parser.error("upload is not implemented; future uploads will be private by default")
@@ -37,7 +40,16 @@ def _build_parser() -> argparse.ArgumentParser:
     validate.add_argument("episode", help="episode ID (for example file-001) or manifest path")
     validate.add_argument("--json", action="store_true", help="emit a machine-readable result")
 
-    for name in ("voice", "clips", "compose", "qc", "build"):
+    voice = commands.add_parser("voice", help="preflight approved narration generation (dry-run only)")
+    voice.add_argument("episode", help="episode ID (for example file-001) or manifest path")
+    voice.add_argument(
+        "--dry-run",
+        action="store_true",
+        default=True,
+        help="show the safe generation plan without creating files or calling a provider (default)",
+    )
+
+    for name in ("clips", "compose", "qc", "build"):
         stage = commands.add_parser(name, help=f"reserved for future {name} automation")
         stage.add_argument("episode")
     upload = commands.add_parser("upload", help="reserved for future private YouTube upload")
@@ -65,3 +77,27 @@ def _validate_episode(args: argparse.Namespace) -> int:
         for issue in result.issues:
             print(f"  {issue.path}: {issue.message}")
     return 0 if result.valid else 1
+
+
+def _plan_voice(args: argparse.Namespace) -> int:
+    """Print a provider-free dry-run plan after the human approval gate."""
+    candidate = Path(args.episode)
+    manifest_path = candidate if candidate.suffix == ".json" else REPOSITORY_ROOT / "episodes" / args.episode / "manifest.json"
+    if not manifest_path.is_absolute():
+        manifest_path = (REPOSITORY_ROOT / manifest_path).resolve()
+
+    plan = plan_voice_generation(
+        manifest_path,
+        REPOSITORY_ROOT / "schemas" / "episode.schema.json",
+        REPOSITORY_ROOT,
+    )
+    if not plan.allowed:
+        print(f"VOICE REFUSED: {plan.reason}")
+        return 1
+
+    assert plan.episode_id is not None
+    assert plan.output_path is not None
+    print(f"VOICE DRY-RUN: {plan.episode_id}")
+    print(f"Planned output: {plan.output_path.relative_to(REPOSITORY_ROOT)}")
+    print("No provider call, credential read, or file creation was performed.")
+    return 0

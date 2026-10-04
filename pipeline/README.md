@@ -11,6 +11,7 @@ repository root:
 ```bash
 python -m pipeline episode validate file-001
 python -m pipeline episode validate file-001 --json
+python -m pipeline voice file-001
 python -m unittest pipeline.tests.test_manifest_validator
 ```
 
@@ -20,6 +21,14 @@ secret-shaped manifest keys, and human approval before public privacy. The CLI
 also reserves the planned stage commands, but they intentionally make no provider
 calls until their adapters are implemented. The future `upload` surface accepts
 only `--privacy private` at this stage.
+
+## Voice preflight
+
+`python -m pipeline voice <episode-id>` is a provider-neutral dry-run. It
+validates the manifest and refuses unless the human owner has recorded
+`approvals.final_script.approved = true`. It creates no files, reads no
+credentials, and makes no network request. A provider implementation is not
+enabled yet, so this command only reports the deterministic narration target.
 
 ## Planned modules
 
