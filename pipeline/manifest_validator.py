@@ -54,12 +54,41 @@ def validate_manifest_file(manifest_path: Path, schema_path: Path) -> Validation
     except json.JSONDecodeError as error:
         return ValidationResult(schema_path, (ValidationIssue("$", f"invalid schema JSON: {error.msg}"),))
 
-    _validate_schema(manifest, schema, "$", issues)
+    _validate_schema(manifest, schema, "$", issues, schema)
     _validate_studio_policies(manifest, manifest_path, issues)
     return ValidationResult(manifest_path, tuple(issues))
 
 
-def _validate_schema(value: Any, schema: dict[str, Any], path: str, issues: list[ValidationIssue]) -> None:
+def _validate_schema(
+    value: Any,
+    schema: dict[str, Any],
+    path: str,
+    issues: list[ValidationIssue],
+    root_schema: dict[str, Any],
+) -> None:
+    """Validate the JSON Schema keywords used by the canonical manifest schema.
+
+    This is intentionally small rather than a replacement for a general JSON
+    Schema library. It supports the draft 2020-12 features used in this local,
+    versioned contract: local references, composition, and conditionals.
+    """
+    if "$ref" in schema:
+        try:
+            _validate_schema(value, _resolve_local_ref(schema["$ref"], root_schema), path, issues, root_schema)
+        except ValueError as error:
+            issues.append(ValidationIssue(path, str(error)))
+
+    for sub_schema in schema.get("allOf", []):
+        _validate_schema(value, sub_schema, path, issues, root_schema)
+
+    condition = schema.get("if")
+    if condition is not None and _matches_schema(value, condition, root_schema):
+        then_schema = schema.get("then")
+        if then_schema is not None:
+            _validate_schema(value, then_schema, path, issues, root_schema)
+    elif condition is not None and schema.get("else") is not None:
+        _validate_schema(value, schema["else"], path, issues, root_schema)
+
     allowed_types = schema.get("type")
     if allowed_types is not None:
         types = allowed_types if isinstance(allowed_types, list) else [allowed_types]
@@ -67,7 +96,9 @@ def _validate_schema(value: Any, schema: dict[str, Any], path: str, issues: list
             issues.append(ValidationIssue(path, f"expected type {' or '.join(types)}"))
             return
 
-    if "enum" in schema and value not in schema["enum"]:
+    if "const" in schema and not _json_equal(value, schema["const"]):
+        issues.append(ValidationIssue(path, f"must equal {schema['const']!r}"))
+    if "enum" in schema and not any(_json_equal(value, option) for option in schema["enum"]):
         issues.append(ValidationIssue(path, f"must be one of: {', '.join(map(str, schema['enum']))}"))
 
     if isinstance(value, str):
@@ -91,7 +122,7 @@ def _validate_schema(value: Any, schema: dict[str, Any], path: str, issues: list
         item_schema = schema.get("items")
         if item_schema:
             for index, item in enumerate(value):
-                _validate_schema(item, item_schema, f"{path}[{index}]", issues)
+                _validate_schema(item, item_schema, f"{path}[{index}]", issues, root_schema)
 
     if isinstance(value, dict):
         properties = schema.get("properties", {})
@@ -102,9 +133,45 @@ def _validate_schema(value: Any, schema: dict[str, Any], path: str, issues: list
             for name in value:
                 if name not in properties:
                     issues.append(ValidationIssue(f"{path}.{name}", "property is not allowed"))
+        if schema.get("unevaluatedProperties") is False:
+            evaluated = _evaluated_property_names(schema, root_schema)
+            for name in value:
+                if name not in evaluated:
+                    issues.append(ValidationIssue(f"{path}.{name}", "property is not allowed"))
         for name, item in value.items():
             if name in properties:
-                _validate_schema(item, properties[name], f"{path}.{name}", issues)
+                _validate_schema(item, properties[name], f"{path}.{name}", issues, root_schema)
+
+
+def _matches_schema(value: Any, schema: dict[str, Any], root_schema: dict[str, Any]) -> bool:
+    """Evaluate a conditional schema without adding validation issues."""
+    probe_issues: list[ValidationIssue] = []
+    _validate_schema(value, schema, "$", probe_issues, root_schema)
+    return not probe_issues
+
+
+def _resolve_local_ref(reference: str, root_schema: dict[str, Any]) -> dict[str, Any]:
+    if not reference.startswith("#/"):
+        raise ValueError(f"unsupported schema reference '{reference}'")
+    value: Any = root_schema
+    for token in reference[2:].split("/"):
+        token = token.replace("~1", "/").replace("~0", "~")
+        if not isinstance(value, dict) or token not in value:
+            raise ValueError(f"unresolvable schema reference '{reference}'")
+        value = value[token]
+    if not isinstance(value, dict):
+        raise ValueError(f"schema reference '{reference}' does not point to an object")
+    return value
+
+
+def _evaluated_property_names(schema: dict[str, Any], root_schema: dict[str, Any]) -> set[str]:
+    """Return object keys covered by properties or composed local references."""
+    names = set(schema.get("properties", {}))
+    if "$ref" in schema:
+        names.update(_evaluated_property_names(_resolve_local_ref(schema["$ref"], root_schema), root_schema))
+    for sub_schema in schema.get("allOf", []):
+        names.update(_evaluated_property_names(sub_schema, root_schema))
+    return names
 
 
 def _matches_type(value: Any, expected: str) -> bool:
@@ -117,6 +184,13 @@ def _matches_type(value: Any, expected: str) -> bool:
         "boolean": isinstance(value, bool),
         "null": value is None,
     }.get(expected, False)
+
+
+def _json_equal(left: Any, right: Any) -> bool:
+    """Compare JSON values without Python's bool-is-an-int equivalence."""
+    if isinstance(left, bool) != isinstance(right, bool):
+        return False
+    return left == right
 
 
 def _validate_studio_policies(manifest: Any, manifest_path: Path, issues: list[ValidationIssue]) -> None:
@@ -143,15 +217,17 @@ def _validate_studio_policies(manifest: Any, manifest_path: Path, issues: list[V
     if not isinstance(publishing, dict):
         return
     privacy = publishing.get("youtube_privacy")
-    approved = publishing.get("public_publish_approved")
+    approvals = manifest.get("approvals")
+    public_publish = approvals.get("public_publish") if isinstance(approvals, dict) else None
+    public_approved = public_publish.get("approved") if isinstance(public_publish, dict) else False
     status = manifest.get("status")
-    if privacy == "public" and approved is not True:
-        issues.append(ValidationIssue("$.publishing.public_publish_approved", "must be true before public privacy is allowed"))
-    if status == "published":
-        if approved is not True:
-            issues.append(ValidationIssue("$.publishing.public_publish_approved", "must be true for a published episode"))
+    if privacy in {"unlisted", "public"} and public_approved is not True:
+        issues.append(ValidationIssue("$.approvals.public_publish.approved", "must be true before non-private privacy is allowed"))
+    if status in {"published", "measured"}:
+        if public_approved is not True:
+            issues.append(ValidationIssue("$.approvals.public_publish.approved", "must be true for a published or measured episode"))
         if privacy != "public":
-            issues.append(ValidationIssue("$.publishing.youtube_privacy", "must be 'public' for a published episode"))
+            issues.append(ValidationIssue("$.publishing.youtube_privacy", "must be 'public' for a published or measured episode"))
 
 
 def _find_sensitive_keys(value: Any, path: str, issues: list[ValidationIssue]) -> None:
