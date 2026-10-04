@@ -1,0 +1,32 @@
+name: Validate studio contracts
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate manifest and pipeline tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate episode manifests
+        run: |
+          for manifest in episodes/*/manifest.json; do
+            python -m pipeline episode validate "$manifest"
+          done
+
+      - name: Run manifest validator tests
+        run: python -m unittest pipeline.tests.test_manifest_validator
