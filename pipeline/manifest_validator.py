@@ -7,6 +7,7 @@ that are intentionally stricter than the portable episode contract.
 from __future__ import annotations
 
 import json
+import hashlib
 import re
 from dataclasses import dataclass
 from datetime import datetime
@@ -56,6 +57,9 @@ def validate_manifest_file(manifest_path: Path, schema_path: Path) -> Validation
 
     _validate_schema(manifest, schema, "$", issues, schema)
     _validate_studio_policies(manifest, manifest_path, issues)
+    repository_root = schema_path.resolve().parent.parent
+    _validate_approval_artifacts(manifest, repository_root, issues)
+    _validate_asset_registry(manifest, repository_root, issues)
     return ValidationResult(manifest_path, tuple(issues))
 
 
@@ -117,6 +121,8 @@ def _validate_schema(
             issues.append(ValidationIssue(path, f"must be at least {schema['minimum']}"))
 
     if isinstance(value, list):
+        if len(value) < schema.get("minItems", 0):
+            issues.append(ValidationIssue(path, "must contain the reviewed artifacts"))
         if schema.get("uniqueItems") and len({json.dumps(item, sort_keys=True) for item in value}) != len(value):
             issues.append(ValidationIssue(path, "items must be unique"))
         item_schema = schema.get("items")
@@ -206,7 +212,7 @@ def _validate_studio_policies(manifest: Any, manifest_path: Path, issues: list[V
     if isinstance(episode_id, str) and manifest_path.parent.name != episode_id:
         issues.append(ValidationIssue("$.episode_id", "must match the manifest parent directory"))
 
-    for field in ("script_path", "storyboard_path"):
+    for field in ("script_path", "storyboard_path", "visual_interface_path", "assets_path"):
         value = manifest.get(field)
         if isinstance(value, str) and (Path(value).is_absolute() or ".." in Path(value).parts):
             issues.append(ValidationIssue(f"$.{field}", "must be a safe repository-relative path"))
@@ -240,3 +246,156 @@ def _find_sensitive_keys(value: Any, path: str, issues: list[ValidationIssue]) -
     elif isinstance(value, list):
         for index, nested in enumerate(value):
             _find_sensitive_keys(nested, f"{path}[{index}]", issues)
+
+
+def _safe_file(root: Path, path: Any) -> Path | None:
+    if not isinstance(path, str) or not path or Path(path).is_absolute() or ".." in Path(path).parts:
+        return None
+    resolved = (root / path).resolve()
+    return resolved if resolved.is_relative_to(root.resolve()) else None
+
+
+def _validate_approval_artifacts(manifest: Any, root: Path, issues: list[ValidationIssue]) -> None:
+    if not isinstance(manifest, dict) or not isinstance(manifest.get("approvals"), dict):
+        return
+    episode_id = manifest.get("episode_id")
+    master = f"output/{episode_id}/final/{episode_id}-{manifest.get('format', 'short')}.mp4"
+    for field in ("script_path", "storyboard_path", "visual_interface_path", "assets_path"):
+        file = _safe_file(root, manifest.get(field))
+        if file is None or not file.is_file():
+            issues.append(ValidationIssue(f"$.{field}", "referenced input file is missing or unsafe"))
+    required = {
+        "final_script": [manifest.get("script_path")],
+        "storyboard": [manifest.get("script_path"), manifest.get("storyboard_path")],
+        "visual_interface": [manifest.get("visual_interface_path")],
+        "final_qc": [manifest.get("script_path"), manifest.get("storyboard_path"),
+                     manifest.get("visual_interface_path"), manifest.get("assets_path"),
+                     master,
+                     f"output/{episode_id}/final/qc-report.json"],
+        "public_publish": [master,
+                           f"episodes/{episode_id}/publishing-metadata.json"],
+    }
+    for gate_name, paths in required.items():
+        gate = manifest["approvals"].get(gate_name)
+        if not isinstance(gate, dict) or gate.get("approved") is not True:
+            continue
+        artifacts = gate.get("artifacts")
+        if not isinstance(artifacts, list):
+            continue  # diagnosed by the schema
+        prefix = f"$.approvals.{gate_name}.artifacts"
+        recorded = [a.get("path") for a in artifacts if isinstance(a, dict)]
+        if len(recorded) != len(set(p for p in recorded if isinstance(p, str))):
+            issues.append(ValidationIssue(prefix, "duplicate artifact paths"))
+        for path in paths:
+            if path not in recorded:
+                issues.append(ValidationIssue(prefix, f"must pin reviewed file '{path}'"))
+        for index, artifact in enumerate(artifacts):
+            if not isinstance(artifact, dict):
+                continue
+            file = _safe_file(root, artifact.get("path"))
+            if file is None or not file.is_file():
+                issues.append(ValidationIssue(f"{prefix}[{index}].path", "reviewed file is missing or unsafe"))
+            elif hashlib.sha256(file.read_bytes()).hexdigest() != artifact.get("sha256"):
+                issues.append(ValidationIssue(f"{prefix}[{index}].sha256", "reviewed file changed; fresh human approval required"))
+    # Approval cannot be carried over to a different title, disclosure or private video.
+    gate = manifest["approvals"].get("public_publish", {})
+    if isinstance(gate, dict) and gate.get("approved") is True:
+        file = _safe_file(root, f"episodes/{episode_id}/publishing-metadata.json")
+        if file and file.is_file():
+            try:
+                metadata = json.loads(file.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                metadata = None
+            publishing = manifest.get("publishing", {})
+            if not isinstance(publishing, dict):
+                return
+            video_id = publishing.get("youtube_video_id")
+            if not isinstance(video_id, str) or not video_id.strip():
+                issues.append(ValidationIssue("$.publishing.youtube_video_id", "public approval requires an existing private upload ID"))
+            expected = {"title": manifest.get("title"), "youtube_video_id": publishing.get("youtube_video_id"),
+                        "selfDeclaredMadeForKids": publishing.get("selfDeclaredMadeForKids"),
+                        "containsSyntheticMedia": publishing.get("containsSyntheticMedia")}
+            if not isinstance(metadata, dict) or any(metadata.get(k) != v for k, v in expected.items()):
+                issues.append(ValidationIssue("$.approvals.public_publish.artifacts", "frozen publishing metadata does not match manifest"))
+
+
+def _validate_asset_registry(manifest: Any, root: Path, issues: list[ValidationIssue]) -> None:
+    if not isinstance(manifest, dict):
+        return
+    file = _safe_file(root, manifest.get("assets_path"))
+    prefix = "$.assets_path"
+    if file is None or not file.is_file():
+        issues.append(ValidationIssue(prefix, "asset registry is missing or unsafe"))
+        return
+    try:
+        registry = json.loads(file.read_text(encoding="utf-8"))
+        schema = json.loads((root / "schemas/assets.schema.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        issues.append(ValidationIssue(prefix, "asset registry or schema is unreadable"))
+        return
+    previous_issues = len(issues)
+    _validate_schema(registry, schema, prefix, issues, schema)
+    _find_sensitive_keys(registry, prefix, issues)
+    if len(issues) != previous_issues:
+        return
+    if not isinstance(registry, dict):
+        return
+    if registry.get("episode_id") != manifest.get("episode_id"):
+        issues.append(ValidationIssue(prefix, "asset registry episode ID differs from manifest"))
+    assets = registry.get("assets", [])
+    if not isinstance(assets, list):
+        return
+    storyboard = _safe_file(root, manifest.get("storyboard_path"))
+    scenes = set(re.findall(r"^## (scene-\d{2})\s*$", storyboard.read_text(), re.M)) if storyboard and storyboard.is_file() else set()
+    ids, paths, selections = set(), set(), set()
+    for index, asset in enumerate(assets):
+        if not isinstance(asset, dict):
+            continue
+        at = f"{prefix}.assets[{index}]"
+        for key, seen in (("asset_id", ids), ("path", paths)):
+            value = asset.get(key)
+            if isinstance(value, str):
+                if value in seen:
+                    issues.append(ValidationIssue(at + "." + key, "must be unique"))
+                seen.add(value)
+        scene, shot = asset.get("scene_id"), asset.get("shot_id")
+        if scene is not None and (not isinstance(scene, str) or scene not in scenes):
+            issues.append(ValidationIssue(at + ".scene_id", "scene is not in canonical storyboard"))
+        if shot is not None and (not isinstance(shot, str) or not isinstance(scene, str) or not shot.startswith(scene + "-shot-")):
+            issues.append(ValidationIssue(at + ".shot_id", "shot must belong to the referenced scene"))
+        if asset.get("kind") == "clip" and (not scene or not shot):
+            issues.append(ValidationIssue(at + ".shot_id", "clips require scene and shot IDs"))
+        if asset.get("selected") is True:
+            if not asset.get("review_ref"):
+                issues.append(ValidationIssue(at + ".review_ref", "selected assets require a creative review reference"))
+            selection = (asset.get("kind"), scene, shot)
+            if selection in selections:
+                issues.append(ValidationIssue(at, "only one selected take per kind/scene/shot"))
+            selections.add(selection)
+        if asset.get("kind") in {"music", "sfx"} and (not asset.get("license") or not asset.get("source")):
+            issues.append(ValidationIssue(at + ".license", "music/SFX require source and license evidence"))
+        target = _safe_file(root, asset.get("path"))
+        if target is None:
+            issues.append(ValidationIssue(at + ".path", "asset path must be safe and repository-relative"))
+        # Registry travels without media; bytes are checked when locally available.
+        elif target.is_file() and hashlib.sha256(target.read_bytes()).hexdigest() != asset.get("sha256"):
+            issues.append(ValidationIssue(at + ".sha256", "asset checksum mismatch"))
+    for index, asset in enumerate(assets):
+        if isinstance(asset, dict) and isinstance(asset.get("dependencies"), list):
+            if any(not isinstance(dep, str) or dep not in ids or dep == asset.get("asset_id") for dep in asset["dependencies"]):
+                issues.append(ValidationIssue(f"{prefix}.assets[{index}].dependencies", "dependencies must reference other registered assets"))
+    graph = {a["asset_id"]: a["dependencies"] for a in assets}
+    visited, active = set(), set()
+    def cyclic(asset_id: str) -> bool:
+        if asset_id in active:
+            return True
+        if asset_id in visited:
+            return False
+        active.add(asset_id)
+        if any(cyclic(dep) for dep in graph.get(asset_id, [])):
+            return True
+        active.remove(asset_id)
+        visited.add(asset_id)
+        return False
+    if any(cyclic(asset_id) for asset_id in graph):
+        issues.append(ValidationIssue(prefix, "asset dependencies contain a cycle"))

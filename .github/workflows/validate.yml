@@ -29,4 +29,4 @@ jobs:
           done
 
       - name: Run manifest validator tests
-        run: python -m unittest pipeline.tests.test_manifest_validator
+        run: python -m unittest discover -s pipeline/tests

@@ -1,6 +1,6 @@
 # MASTER RULES
 
-Versão: 1.0
+Versão: 1.1
 Última atualização: 2026-10-03
 
 Este arquivo contém as regras máximas do Faceless YouTube Studio. Em caso de conflito entre documentos, estas regras prevalecem.
@@ -66,3 +66,9 @@ Avaliar principalmente:
 
 ## 11. Princípio operacional
 O canal deve funcionar como um estúdio de mídia: processo replicável, documentação, medição, melhoria contínua e consistência criativa.
+
+## 12. Aprovação e passagem entre etapas
+- Revisão de agente não é aprovação humana. Aprovações operacionais ficam no manifest e vinculam os arquivos revisados por SHA-256.
+- Roteiro, storyboard e interface precisam de aprovação humana antes de produção de assets; arquivos alterados exigem nova aprovação das etapas afetadas.
+- Upload é privado. Publicação por API exige aprovação final/QC no manifest e `--confirm-public`; publicação manual no Studio exige os mesmos gates e autorização humana documentada antes da ação.
+- Contratos de responsabilidade, artefatos e conclusão do FILE #001: `docs/file-001-handoff.md`.

@@ -76,3 +76,15 @@ A publicação pública passa a exigir **ambos**: aprovação no manifest **e** 
 **Motivo:** diversificar os primeiros arquivos (excesso de Lua) e fechar o roteiro do FILE #001 para produção.
 
 **Pendente do owner:** aprovar o roteiro final, o storyboard e a spec da interface; confirmar os substitutos dos slots 6 e 8.
+
+## 2026-10-03 — Correções da auditoria de onboarding e handoffs
+**Autorização:** owner solicitou “Ok corrija então” após a auditoria.
+**Decisão operacional:** manifest v3 inclui gates de storyboard/interface, aprovações
+operacionais vinculadas a hashes e registro de assets com IDs por plano/take.
+Fluxo unificado: assets → voz/timing → clips → edição → QC. Responsáveis, entradas,
+saídas e critérios estão em `docs/file-001-handoff.md`. Publicação manual no Studio
+mantém os mesmos gates humanos; `--confirm-public` aplica-se à execução por API.
+**Ajustes de clareza:** scene-01 usa painéis simultâneos; scene-07 mantém a não
+observadora olhando para baixo. Narração e canon D1–D6 preservados.
+**Limite:** esta autorização corrige contratos/documentação; não aprova roteiro final,
+storyboard, interface, QC nem publicação. Essas aprovações continuam pendentes.
