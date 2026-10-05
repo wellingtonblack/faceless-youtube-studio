@@ -1,8 +1,8 @@
-"""Minimal ElevenLabs boundary for safe, read-only provider verification.
+"""ElevenLabs boundary for metadata verification and explicit narration generation.
 
-The adapter deliberately uses the standard library.  It can verify credentials
-and enumerate voices, but it cannot generate narration yet.  Generation will
-be added only with its own explicit command and approval checks.
+The adapter deliberately uses the standard library. Provider calls that create
+audio are allowed only from an approval-gated production command; this module
+does not decide whether a generation is authorized.
 """
 
 from __future__ import annotations
@@ -53,7 +53,7 @@ def load_local_env_value(env_path: Path, variable_name: str) -> str | None:
 
 
 class ElevenLabsClient:
-    """Small HTTP client limited to non-billable metadata requests."""
+    """Small HTTP client for provider metadata and explicit speech synthesis."""
 
     _API_ROOT = "https://api.elevenlabs.io/v1"
 
@@ -86,6 +86,48 @@ class ElevenLabsClient:
             if isinstance(voice_id, str) and isinstance(name, str):
                 voices.append(ElevenLabsVoice(voice_id=voice_id, name=name))
         return tuple(voices)
+
+    def synthesize_narration(self, voice_id: str, text: str, output_path: Path) -> Path:
+        """Create one approved narration MP3 and save it outside version control."""
+        if not voice_id or not text.strip():
+            raise ElevenLabsError("voice ID and narration text are required")
+        body = json.dumps(
+            {
+                "text": text,
+                "model_id": "eleven_multilingual_v2",
+                "voice_settings": {
+                    "stability": 0.58,
+                    "similarity_boost": 0.75,
+                    "style": 0.12,
+                    "use_speaker_boost": True,
+                    "speed": 0.94,
+                },
+            }
+        ).encode("utf-8")
+        request = Request(
+            f"{self._API_ROOT}/text-to-speech/{voice_id}?output_format=mp3_44100_128",
+            data=body,
+            headers={
+                "xi-api-key": self._api_key,
+                "Accept": "audio/mpeg",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        try:
+            with urlopen(request, timeout=self._timeout_seconds) as response:
+                audio = response.read()
+        except HTTPError as error:
+            if error.code in (401, 403):
+                raise ElevenLabsError("ElevenLabs rejected the API key or voice access") from error
+            raise ElevenLabsError(f"ElevenLabs narration request failed with HTTP {error.code}") from error
+        except (URLError, TimeoutError) as error:
+            raise ElevenLabsError("could not reach ElevenLabs") from error
+        if not audio:
+            raise ElevenLabsError("ElevenLabs returned empty narration audio")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_bytes(audio)
+        return output_path
 
     def _get_json(self, path: str) -> dict[str, Any]:
         request = Request(

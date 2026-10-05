@@ -128,3 +128,15 @@ storyboard, interface, QC nem publicação. Essas aprovações continuam pendent
 - O registro de assets recebeu os 3 assets aprovados (keyframes das cenas 04 e 06 e clip da cena 06). 9 arquivos gerados continuam sem registro por falta de procedência.
 
 **Detalhes e checklist de reaprovação:** `docs/handoffs/2026-10-05-integration-v3.md`.
+
+## 2026-10-05 — Reaprovações e voz do FILE #001
+**Decisão do owner:**
+- reaprovar o roteiro v1.1;
+- reaprovar o storyboard v1.2, incluindo três painéis simultâneos na cena 01 e a personagem da cena 07 mantendo o olhar baixo;
+- vincular novamente a interface de mensagens v1.2;
+- reconfirmar os assets selecionados das cenas 04 e 06;
+- aprovar a voz ElevenLabs `JBFqnCBsd6RMkjVDRZzb` como narrador neutro exclusivo deste piloto.
+
+**Autorização de produção:** seguir para composição, legendas e controle de qualidade, entregando um candidato final para revisão humana. Esta decisão não autoriza upload ou publicação no YouTube.
+
+**Rastreabilidade:** as três aprovações de artefatos estão vinculadas aos hashes normalizados no manifest v3. A voz é identificada pelo ID do provedor e pelo preset `neutral-storyteller-v1`; não representa o personagem The Archivist.

@@ -53,6 +53,11 @@ class HandoffContractTests(unittest.TestCase):
 
     def test_assets_refused_without_storyboard_and_interface_approval(self):
         self.approve('final_script', [self.manifest['script_path']])
+        for gate in ('storyboard', 'visual_interface'):
+            self.manifest['approvals'][gate] = {
+                'approved': False, 'approved_by': None, 'approved_at': None,
+                'ref': None, 'artifacts': [],
+            }
         self.manifest['status'] = 'assets'
         result = self.validate()
         self.assertFalse(result.valid)

@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+import json
 from pathlib import Path
 from unittest.mock import patch
 
@@ -44,6 +45,26 @@ class ElevenLabsClientTests(unittest.TestCase):
     def test_rejects_empty_key(self):
         with self.assertRaises(ElevenLabsError):
             ElevenLabsClient(" ")
+
+    def test_synthesis_posts_explicit_audio_request(self):
+        response = _Response(b"mp3-bytes")
+        client = ElevenLabsClient("test-key")
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            destination = Path(temporary_directory) / "narration.mp3"
+            with patch("pipeline.providers.voice.elevenlabs.urlopen", return_value=response) as mocked_urlopen:
+                output = client.synthesize_narration("voice-1", "A short line.", destination)
+
+            self.assertEqual(output, destination)
+            self.assertEqual(destination.read_bytes(), b"mp3-bytes")
+
+        request = mocked_urlopen.call_args.args[0]
+        self.assertEqual(request.get_method(), "POST")
+        self.assertEqual(
+            request.full_url,
+            "https://api.elevenlabs.io/v1/text-to-speech/voice-1?output_format=mp3_44100_128",
+        )
+        self.assertEqual(json.loads(request.data.decode("utf-8"))["text"], "A short line.")
 
 
 if __name__ == "__main__":

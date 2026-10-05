@@ -7,7 +7,7 @@
   "language": "en",
   "aspect_ratio": "9:16",
   "target_duration_seconds": 33,
-  "status": "script",
+  "status": "assets",
   "series": "The Impossible Files",
   "lore_tags": [
     "03:17",
@@ -31,11 +31,16 @@
   },
   "approvals": {
     "final_script": {
-      "approved": false,
-      "approved_by": null,
-      "approved_at": null,
-      "ref": null,
-      "artifacts": []
+      "approved": true,
+      "approved_by": "wellingtonblack",
+      "approved_at": "2026-10-05",
+      "ref": "docs/decision-log.md#2026-10-05--reaprovações-e-voz-do-file-001",
+      "artifacts": [
+        {
+          "path": "content/season-01/file-001.md",
+          "sha256": "8324c1f26473f580f79d53122a952db805d1618e9b8e4907c23873c149b447a9"
+        }
+      ]
     },
     "recurring_characters": [],
     "lore_additions": [
@@ -71,18 +76,32 @@
       "artifacts": []
     },
     "storyboard": {
-      "approved": false,
-      "approved_by": null,
-      "approved_at": null,
-      "ref": null,
-      "artifacts": []
+      "approved": true,
+      "approved_by": "wellingtonblack",
+      "approved_at": "2026-10-05",
+      "ref": "docs/decision-log.md#2026-10-05--reaprovações-e-voz-do-file-001",
+      "artifacts": [
+        {
+          "path": "content/season-01/file-001.md",
+          "sha256": "8324c1f26473f580f79d53122a952db805d1618e9b8e4907c23873c149b447a9"
+        },
+        {
+          "path": "production/storyboards/file-001-storyboard.md",
+          "sha256": "42333bc5573aef274f7202e3eeef064eb3ce84ae3b4df8f8b7d17d1d8a165110"
+        }
+      ]
     },
     "visual_interface": {
-      "approved": false,
-      "approved_by": null,
-      "approved_at": null,
-      "ref": null,
-      "artifacts": []
+      "approved": true,
+      "approved_by": "wellingtonblack",
+      "approved_at": "2026-10-05",
+      "ref": "docs/decision-log.md#2026-10-05--reaprovações-e-voz-do-file-001",
+      "artifacts": [
+        {
+          "path": "docs/visual/anomaly-message-interface.md",
+          "sha256": "25330436b9e77391d54af978b0f717ef1b17894e72cfe05999a4369be6ec1f48"
+        }
+      ]
     }
   },
   "publishing": {

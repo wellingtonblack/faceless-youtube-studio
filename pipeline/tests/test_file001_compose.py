@@ -1,8 +1,9 @@
+import json
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from pipeline.compose.file001 import _drawtext, _write_text_assets, compose_file_001_picture_lock
+from pipeline.compose.file001 import _drawtext, _require_production_gates, _write_text_assets
 
 
 class File001ComposeTextTest(unittest.TestCase):
@@ -19,10 +20,24 @@ class File001ComposeTextTest(unittest.TestCase):
         self.assertIn("textfile=", filter_text)
         self.assertNotIn(":text=", filter_text)
 
-    def test_current_v3_gates_refuse_picture_lock(self) -> None:
-        root = Path(__file__).resolve().parents[2]
-        with self.assertRaisesRegex(PermissionError, "final_script, storyboard, visual_interface"):
-            compose_file_001_picture_lock(root)
+    def test_missing_v3_gates_refuse_picture_lock(self) -> None:
+        source_manifest = Path(__file__).resolve().parents[2] / "episodes/file-001/manifest.json"
+        manifest = json.loads(source_manifest.read_text(encoding="utf-8"))
+        for gate in ("final_script", "storyboard", "visual_interface"):
+            manifest["approvals"][gate].update({
+                "approved": False,
+                "approved_by": None,
+                "approved_at": None,
+                "ref": None,
+                "artifacts": [],
+            })
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            manifest_path = root / "episodes/file-001/manifest.json"
+            manifest_path.parent.mkdir(parents=True)
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            with self.assertRaisesRegex(PermissionError, "final_script, storyboard, visual_interface"):
+                _require_production_gates(root)
 
 
 if __name__ == "__main__":
