@@ -25,6 +25,11 @@ class VoicePlannerTests(unittest.TestCase):
             "ref": "docs/decision-log.md#voice-approval" if approved else None,
             "artifacts": [{"path": "content/season-01/file-001.md", "sha256": hashlib.sha256((ROOT / "content/season-01/file-001.md").read_bytes()).hexdigest()}] if approved else [],
         }
+        if not approved:
+            # A manifest at the assets stage must already have its script gate.
+            # Keep this fixture at the preceding lifecycle stage so the voice
+            # planner, rather than schema validation, exercises the refusal.
+            manifest["status"] = "script"
         temporary_directory = tempfile.TemporaryDirectory()
         self.addCleanup(temporary_directory.cleanup)
         manifest_directory = Path(temporary_directory.name) / "file-001"
@@ -34,7 +39,7 @@ class VoicePlannerTests(unittest.TestCase):
         return manifest_path
 
     def test_file_001_is_refused_until_final_script_is_approved(self):
-        plan = plan_voice_generation(SOURCE_MANIFEST, SCHEMA, ROOT)
+        plan = plan_voice_generation(self._manifest_with_approval(False), SCHEMA, ROOT)
 
         self.assertFalse(plan.allowed)
         self.assertEqual(plan.episode_id, "file-001")
@@ -50,9 +55,10 @@ class VoicePlannerTests(unittest.TestCase):
         self.assertFalse(plan.output_path.exists())
 
     def test_cli_refuses_file_001_without_calling_a_provider(self):
+        manifest_path = self._manifest_with_approval(False)
         output = StringIO()
         with redirect_stdout(output):
-            exit_code = main(["voice", "file-001"])
+            exit_code = main(["voice", str(manifest_path)])
 
         self.assertEqual(exit_code, 1)
         self.assertIn("VOICE REFUSED", output.getvalue())
