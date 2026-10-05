@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://theimpossiblefiles.local/schemas/episode.schema.json",
   "title": "The Impossible Files Episode Manifest",
-  "description": "Schema version 2. See docs/migrations/2026-10-03-episode-manifest-v2.md for changes from v1 and for validator rules that JSON Schema cannot express.",
+  "description": "Schema version 3. See docs/migrations/2026-10-03-episode-manifest-v3.md.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -16,11 +16,15 @@
     "status",
     "characters",
     "approvals",
-    "publishing"
+    "publishing",
+    "script_path",
+    "storyboard_path",
+    "visual_interface_path",
+    "assets_path"
   ],
   "properties": {
     "schema_version": {
-      "const": 2
+      "const": 3
     },
     "episode_id": {
       "type": "string",
@@ -84,11 +88,12 @@
       "uniqueItems": true
     },
     "script_path": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "storyboard_path": {
-      "description": "Canonical storyboard. Scenes are declared as '## scene-NN' headings; scene count is derived from it, never stored in the manifest.",
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "characters": {
       "description": "IDs of recurring characters (folder names under characters/) who appear in any form: visual, voice, narration or text. Empty array means no recurring character appears.",
@@ -144,11 +149,13 @@
         "recurring_characters",
         "lore_additions",
         "final_qc",
-        "public_publish"
+        "public_publish",
+        "storyboard",
+        "visual_interface"
       ],
       "properties": {
         "final_script": {
-          "$ref": "#/$defs/approval"
+          "$ref": "#/$defs/artifactApproval"
         },
         "recurring_characters": {
           "description": "One entry per recurring character appearing in this episode for the first time or in a new version.",
@@ -232,10 +239,16 @@
           }
         },
         "final_qc": {
-          "$ref": "#/$defs/approval"
+          "$ref": "#/$defs/artifactApproval"
         },
         "public_publish": {
-          "$ref": "#/$defs/approval"
+          "$ref": "#/$defs/artifactApproval"
+        },
+        "storyboard": {
+          "$ref": "#/$defs/artifactApproval"
+        },
+        "visual_interface": {
+          "$ref": "#/$defs/artifactApproval"
         }
       }
     },
@@ -277,6 +290,14 @@
           "format": "date-time"
         }
       }
+    },
+    "visual_interface_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assets_path": {
+      "type": "string",
+      "minLength": 1
     }
   },
   "allOf": [
@@ -357,7 +378,14 @@
         }
       },
       "then": {
-        "$ref": "#/$defs/requireApproved/public_publish"
+        "allOf": [
+          {
+            "$ref": "#/$defs/requireApproved/public_publish"
+          },
+          {
+            "$ref": "#/$defs/requireApproved/final_qc"
+          }
+        ]
       }
     },
     {
@@ -397,6 +425,35 @@
             }
           }
         }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "assets",
+              "voice",
+              "clips",
+              "edit",
+              "qc",
+              "upload_private",
+              "approved_for_publish",
+              "published",
+              "measured"
+            ]
+          }
+        }
+      },
+      "then": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/requireApproved/storyboard"
+          },
+          {
+            "$ref": "#/$defs/requireApproved/visual_interface"
+          }
+        ]
       }
     }
   ],
@@ -537,7 +594,114 @@
             }
           }
         }
+      },
+      "storyboard": {
+        "required": [
+          "approvals"
+        ],
+        "properties": {
+          "approvals": {
+            "properties": {
+              "storyboard": {
+                "properties": {
+                  "approved": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "visual_interface": {
+        "required": [
+          "approvals"
+        ],
+        "properties": {
+          "approvals": {
+            "properties": {
+              "visual_interface": {
+                "properties": {
+                  "approved": {
+                    "const": true
+                  }
+                }
+              }
+            }
+          }
+        }
       }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "artifactApproval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "approved",
+        "approved_by",
+        "approved_at",
+        "ref",
+        "artifacts"
+      ],
+      "properties": {
+        "approved": {
+          "$ref": "#/$defs/approved"
+        },
+        "approved_by": {
+          "$ref": "#/$defs/approvedBy"
+        },
+        "approved_at": {
+          "$ref": "#/$defs/approvedAt"
+        },
+        "ref": {
+          "$ref": "#/$defs/approvalRef"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          },
+          "uniqueItems": true
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/$defs/approvedRequiresRecord"
+        },
+        {
+          "if": {
+            "properties": {
+              "approved": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "artifacts": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
     }
   }
 }

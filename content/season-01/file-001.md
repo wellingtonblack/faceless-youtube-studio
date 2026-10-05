@@ -1,11 +1,12 @@
 # FILE #001 — Everyone Received the Same Message at 3:17 AM
 
-Version: 1.0 — final script, **awaiting owner approval** (manifest `approvals.final_script`)
+Version: 1.1 — final script, **awaiting owner approval** (manifest `approvals.final_script`)
 Lifecycle status: tracked only in `episodes/file-001/manifest.json`.
 Storyboard (canonical scene list): `production/storyboards/file-001-storyboard.md`
 Phone interface: `docs/visual/anomaly-message-interface.md`
 
 ## Changelog
+- 1.1 (2026-10-03): scene-01 uses simultaneous panels; scene-07 keeps the non-observer looking down. Narration and canon unchanged. Final approval remains pending.
 - 1.0 (2026-10-03): final script written to the owner-approved brief. Approved opening line, approved second-message beat, distinct notification sound, Archivist absent, sting `FILE #001 — ARCHIVED`.
 - 0.2 (2026-10-03): applied canon decisions D1–D6 (`docs/proposals/2026-10-03-file-001-continuity.md`).
 - 0.1: initial concept and beat sheet.

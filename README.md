@@ -15,7 +15,8 @@ Ao clonar o repositório:
 
 - **Codex / coding agents:** ler `AGENTS.md` primeiro.
 - **Claude / Claude Code:** ler `CLAUDE.md` primeiro.
-- Todos devem respeitar `MASTER_RULES.md`.
+- Todos devem ler `AGENTS.md`, `CLAUDE.md` e `MASTER_RULES.md`, depois os documentos e arquivos de episódio referenciados.
+- Handoffs do FILE #001: `docs/file-001-handoff.md`; contrato atualizado: manifest v3.
 
 ## Arquitetura híbrida
 O estúdio foi desenhado para funcionar com:

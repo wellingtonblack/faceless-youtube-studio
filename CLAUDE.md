@@ -30,7 +30,7 @@ Never invent canonical facts silently.
 When adding a new recurring fact, character trait, organization, event or rule of the universe, update the appropriate bible/manifest or clearly mark it as a proposal.
 
 ## Creative review checklist
-Before approving a script, verify:
+Before recommending a script for human approval, verify:
 - hook appears immediately;
 - one central premise per Short;
 - English is simple and international;
@@ -52,3 +52,6 @@ When you detect ambiguity, prefer a proposal file or issue rather than silently 
 
 ## Public publishing
 Never publish automatically. The human owner controls final publication approval.
+
+## Handoff contracts
+Read the referenced episode files, `docs/decision-log.md`, and `docs/file-001-handoff.md`. Review the exact versions and hashes handed over. Approval recommendations never set human gates. Flag changed approved artifacts and stop dependent production until fresh approval is recorded. Avoid parallel edits to the same episode manifest; hand off a focused commit/PR.

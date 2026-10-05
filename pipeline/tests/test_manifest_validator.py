@@ -1,4 +1,5 @@
 import json
+import hashlib
 import tempfile
 import unittest
 from pathlib import Path
@@ -29,6 +30,7 @@ class ManifestValidatorTests(unittest.TestCase):
             "approved_by": "human-owner" if approved else None,
             "approved_at": "2026-10-03" if approved else None,
             "ref": "docs/decision-log.md#approval" if approved else None,
+            "artifacts": [{"path": "content/season-01/file-001.md", "sha256": hashlib.sha256((ROOT / "content/season-01/file-001.md").read_bytes()).hexdigest()}] if approved else [],
         }
 
     def assert_issue_at(self, result, path):

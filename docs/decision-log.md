@@ -77,6 +77,18 @@ A publicação pública passa a exigir **ambos**: aprovação no manifest **e** 
 
 **Pendente do owner:** confirmar os substitutos dos slots 6 e 8.
 
+## 2026-10-03 — Correções da auditoria de onboarding e handoffs
+**Autorização:** owner solicitou “Ok corrija então” após a auditoria.
+**Decisão operacional:** manifest v3 inclui gates de storyboard/interface, aprovações
+operacionais vinculadas a hashes e registro de assets com IDs por plano/take.
+Fluxo unificado: assets → voz/timing → clips → edição → QC. Responsáveis, entradas,
+saídas e critérios estão em `docs/file-001-handoff.md`. Publicação manual no Studio
+mantém os mesmos gates humanos; `--confirm-public` aplica-se à execução por API.
+**Ajustes de clareza:** scene-01 usa painéis simultâneos; scene-07 mantém a não
+observadora olhando para baixo. Narração e canon D1–D6 preservados.
+**Limite:** esta autorização corrige contratos/documentação; não aprova roteiro final,
+storyboard, interface, QC nem publicação. Essas aprovações continuam pendentes.
+
 ## 2026-10-03 — Storyboard do FILE #001 aprovado
 **Decisão:** aprovar o storyboard v1.1 de `production/storyboards/file-001-storyboard.md` para `Everyone Received the Same Message at 3:17 AM`.
 **Motivo:** as nove cenas preservam a continuidade de 03:17 UTC, tornam a consequência de olhar para a Lua legível e mantêm a linguagem visual cinematográfica prevista para o canal.
@@ -106,3 +118,13 @@ A publicação pública passa a exigir **ambos**: aprovação no manifest **e** 
 ## 2026-10-04 — Primeiro clip do FILE #001 aprovado
 **Decisão:** aprovar `scene-06-moon-reveal-clip-v1` como o clip de revelação da Lua.
 **Motivo:** o movimento lento preserva a composição aprovada, mantém a Lua como foco dominante e entrega a escalada sem texto, marcas ou elementos de alerta.
+
+## 2026-10-05 — Integração do main local com o PR #1 (manifest v3)
+**Contexto:** o `main` local (aprovações registradas em 2026-10-03/04) e o PR #1 (v3, aprovações vinculadas a hashes) divergiram. A integração está no branch `claude/integrate-v3`, para revisão do owner.
+**Estado após a integração:**
+- Os gates operacionais da v3 ficam todos `false`. Nenhum hash foi atribuído por agente.
+- O roteiro e o storyboard aprovados localmente foram alterados depois (roteiro: só a linha de versão; storyboard: cenas 01 e 07). Pela regra da v3, precisam de nova aprovação.
+- A interface v1.2 é byte a byte a versão aprovada pelo owner. A vinculação do hash fica pendente por causa da divergência CRLF/LF entre Windows e CI.
+- O registro de assets recebeu os 3 assets aprovados (keyframes das cenas 04 e 06 e clip da cena 06). 9 arquivos gerados continuam sem registro por falta de procedência.
+
+**Detalhes e checklist de reaprovação:** `docs/handoffs/2026-10-05-integration-v3.md`.

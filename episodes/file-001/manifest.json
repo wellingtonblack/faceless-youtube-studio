@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "episode_id": "file-001",
   "file_number": 1,
   "title": "Everyone Received the Same Message at 3:17 AM",
@@ -7,9 +7,16 @@
   "language": "en",
   "aspect_ratio": "9:16",
   "target_duration_seconds": 33,
-  "status": "assets",
+  "status": "script",
   "series": "The Impossible Files",
-  "lore_tags": ["03:17", "03:17-utc", "moon", "global-message", "we-saw-you-too", "anomaly"],
+  "lore_tags": [
+    "03:17",
+    "03:17-utc",
+    "moon",
+    "global-message",
+    "we-saw-you-too",
+    "anomaly"
+  ],
   "script_path": "content/season-01/file-001.md",
   "storyboard_path": "production/storyboards/file-001-storyboard.md",
   "characters": [],
@@ -23,7 +30,13 @@
     "model": null
   },
   "approvals": {
-    "final_script": {"approved": true, "approved_by": "wellingtonblack", "approved_at": "2026-10-03", "ref": "content/season-01/file-001.md#final-script"},
+    "final_script": {
+      "approved": false,
+      "approved_by": null,
+      "approved_at": null,
+      "ref": null,
+      "artifacts": []
+    },
     "recurring_characters": [],
     "lore_additions": [
       {
@@ -43,8 +56,34 @@
         "ref": "docs/proposals/2026-10-03-file-001-continuity.md#d2--direct-consequence-for-looking"
       }
     ],
-    "final_qc": {"approved": false, "approved_by": null, "approved_at": null, "ref": null},
-    "public_publish": {"approved": false, "approved_by": null, "approved_at": null, "ref": null}
+    "final_qc": {
+      "approved": false,
+      "approved_by": null,
+      "approved_at": null,
+      "ref": null,
+      "artifacts": []
+    },
+    "public_publish": {
+      "approved": false,
+      "approved_by": null,
+      "approved_at": null,
+      "ref": null,
+      "artifacts": []
+    },
+    "storyboard": {
+      "approved": false,
+      "approved_by": null,
+      "approved_at": null,
+      "ref": null,
+      "artifacts": []
+    },
+    "visual_interface": {
+      "approved": false,
+      "approved_by": null,
+      "approved_at": null,
+      "ref": null,
+      "artifacts": []
+    }
   },
   "publishing": {
     "youtube_privacy": "private",
@@ -52,5 +91,7 @@
     "containsSyntheticMedia": true,
     "youtube_video_id": null,
     "published_at": null
-  }
+  },
+  "visual_interface_path": "docs/visual/anomaly-message-interface.md",
+  "assets_path": "episodes/file-001/assets.json"
 }
