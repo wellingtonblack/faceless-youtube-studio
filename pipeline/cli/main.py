@@ -8,7 +8,8 @@ from pathlib import Path
 from typing import Sequence
 
 from pipeline.manifest_validator import validate_manifest_file
-from pipeline.providers.voice import plan_voice_generation
+from pipeline.compose import compose_file_001_picture_lock
+from pipeline.providers.voice import ElevenLabsClient, ElevenLabsError, plan_voice_generation
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
@@ -22,7 +23,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _validate_episode(args)
     if args.command == "voice":
         return _plan_voice(args)
-    if args.command in {"clips", "compose", "qc", "build"}:
+    if args.command == "provider" and args.provider == "elevenlabs" and args.provider_command == "verify":
+        return _verify_elevenlabs()
+    if args.command == "compose":
+        return _compose_picture_lock(args)
+    if args.command in {"clips", "qc", "build"}:
         parser.error(f"'{args.command}' is reserved but not implemented yet")
     if args.command == "upload":
         parser.error("upload is not implemented; future uploads will be private by default")
@@ -49,9 +54,21 @@ def _build_parser() -> argparse.ArgumentParser:
         help="show the safe generation plan without creating files or calling a provider (default)",
     )
 
-    for name in ("clips", "compose", "qc", "build"):
+    provider = commands.add_parser("provider", help="safe provider connection checks")
+    provider_commands = provider.add_subparsers(dest="provider")
+    elevenlabs = provider_commands.add_parser("elevenlabs", help="ElevenLabs metadata operations")
+    elevenlabs_commands = elevenlabs.add_subparsers(dest="provider_command")
+    elevenlabs_commands.add_parser(
+        "verify",
+        help="verify the configured key by listing voices; never generates audio",
+    )
+
+    for name in ("clips", "qc", "build"):
         stage = commands.add_parser(name, help=f"reserved for future {name} automation")
         stage.add_argument("episode")
+    compose = commands.add_parser("compose", help="render the silent FILE #001 picture lock")
+    compose.add_argument("episode")
+    compose.add_argument("--ffmpeg", help="explicit FFmpeg executable path")
     upload = commands.add_parser("upload", help="reserved for future private YouTube upload")
     upload.add_argument("episode")
     upload.add_argument("--privacy", choices=("private",), default="private")
@@ -100,4 +117,33 @@ def _plan_voice(args: argparse.Namespace) -> int:
     print(f"VOICE DRY-RUN: {plan.episode_id}")
     print(f"Planned output: {plan.output_path.relative_to(REPOSITORY_ROOT)}")
     print("No provider call, credential read, or file creation was performed.")
+    return 0
+
+
+def _verify_elevenlabs() -> int:
+    """Confirm the local key can perform the minimal read-only voices request."""
+    try:
+        voices = ElevenLabsClient.from_local_environment(REPOSITORY_ROOT).list_voices()
+    except ElevenLabsError as error:
+        print(f"ELEVENLABS REFUSED: {error}")
+        return 1
+
+    print("ELEVENLABS VERIFIED")
+    print(f"Accessible voices: {len(voices)}")
+    print("No audio was generated and no output files were created.")
+    return 0
+
+
+def _compose_picture_lock(args: argparse.Namespace) -> int:
+    if args.episode != "file-001":
+        raise ValueError("only file-001 has a defined picture-lock composition")
+    result = validate_manifest_file(
+        REPOSITORY_ROOT / "episodes" / args.episode / "manifest.json",
+        REPOSITORY_ROOT / "schemas" / "episode.schema.json",
+    )
+    if not result.valid:
+        print("COMPOSE REFUSED: episode manifest is invalid")
+        return 1
+    output = compose_file_001_picture_lock(REPOSITORY_ROOT, args.ffmpeg)
+    print(f"PICTURE LOCK: {output.relative_to(REPOSITORY_ROOT)}")
     return 0

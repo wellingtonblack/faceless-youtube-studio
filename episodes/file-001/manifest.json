@@ -15,8 +15,8 @@
   "characters": [],
   "voice": {
     "provider": "elevenlabs",
-    "voice_id": null,
-    "preset": null
+    "voice_id": "JBFqnCBsd6RMkjVDRZzb",
+    "preset": "neutral-storyteller-v1"
   },
   "video": {
     "provider": "runway",

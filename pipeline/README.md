@@ -22,6 +22,20 @@ also reserves the planned stage commands, but they intentionally make no provide
 calls until their adapters are implemented. The future `upload` surface accepts
 only `--privacy private` at this stage.
 
+## ElevenLabs connection check
+
+After setting `ELEVENLABS_API_KEY` in the untracked local `.env`, confirm the
+key and its **Voices: Read** permission without creating audio or using speech
+credits:
+
+```bash
+python -m pipeline provider elevenlabs verify
+```
+
+This command reads the accessible-voices metadata only. Narration and sound
+effect generation remain deliberately unimplemented until their own explicit,
+approval-gated commands are added.
+
 ## Voice preflight
 
 `python -m pipeline voice <episode-id>` is a provider-neutral dry-run. It
