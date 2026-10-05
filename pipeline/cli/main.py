@@ -144,6 +144,10 @@ def _compose_picture_lock(args: argparse.Namespace) -> int:
     if not result.valid:
         print("COMPOSE REFUSED: episode manifest is invalid")
         return 1
-    output = compose_file_001_picture_lock(REPOSITORY_ROOT, args.ffmpeg)
+    try:
+        output = compose_file_001_picture_lock(REPOSITORY_ROOT, args.ffmpeg)
+    except PermissionError as error:
+        print(f"COMPOSE REFUSED: {error}")
+        return 1
     print(f"PICTURE LOCK: {output.relative_to(REPOSITORY_ROOT)}")
     return 0

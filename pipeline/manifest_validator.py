@@ -20,6 +20,7 @@ LIFECYCLE = (
     "edit", "qc", "upload_private", "approved_for_publish", "published", "measured",
 )
 SENSITIVE_KEY = re.compile(r"(?:api[_-]?key|secret|token|password|private[_-]?key)", re.IGNORECASE)
+_NORMALIZED_TEXT_SUFFIXES = frozenset({".json", ".md", ".svg"})
 
 
 @dataclass(frozen=True)
@@ -255,6 +256,19 @@ def _safe_file(root: Path, path: Any) -> Path | None:
     return resolved if resolved.is_relative_to(root.resolve()) else None
 
 
+def artifact_sha256(path: Path) -> str:
+    """Return a cross-platform approval hash for an artifact.
+
+    Approval-bound Markdown, JSON, and SVG are normalized to LF before
+    hashing. This makes Windows ``core.autocrlf`` and Linux CI verify the same
+    reviewed text. All other files (including media) remain byte-exact.
+    """
+    content = path.read_bytes()
+    if path.suffix.lower() in _NORMALIZED_TEXT_SUFFIXES:
+        content = content.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return hashlib.sha256(content).hexdigest()
+
+
 def _validate_approval_artifacts(manifest: Any, root: Path, issues: list[ValidationIssue]) -> None:
     if not isinstance(manifest, dict) or not isinstance(manifest.get("approvals"), dict):
         return
@@ -295,7 +309,7 @@ def _validate_approval_artifacts(manifest: Any, root: Path, issues: list[Validat
             file = _safe_file(root, artifact.get("path"))
             if file is None or not file.is_file():
                 issues.append(ValidationIssue(f"{prefix}[{index}].path", "reviewed file is missing or unsafe"))
-            elif hashlib.sha256(file.read_bytes()).hexdigest() != artifact.get("sha256"):
+            elif artifact_sha256(file) != artifact.get("sha256"):
                 issues.append(ValidationIssue(f"{prefix}[{index}].sha256", "reviewed file changed; fresh human approval required"))
     # Approval cannot be carried over to a different title, disclosure or private video.
     gate = manifest["approvals"].get("public_publish", {})

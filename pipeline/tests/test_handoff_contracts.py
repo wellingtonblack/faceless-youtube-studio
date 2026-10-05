@@ -1,13 +1,12 @@
 """Regressions for unsafe handoffs, stale approvals and ambiguous asset records."""
 import copy
-import hashlib
 import json
 import shutil
 import tempfile
 import unittest
 from pathlib import Path
 
-from pipeline.manifest_validator import validate_manifest_file
+from pipeline.manifest_validator import artifact_sha256, validate_manifest_file
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -26,7 +25,7 @@ class HandoffContractTests(unittest.TestCase):
         self.manifest['approvals'][name] = {
             'approved': True, 'approved_by': 'test-human', 'approved_at': '2026-10-03',
             'ref': 'docs/decision-log.md#test-only',
-            'artifacts': [{'path': p, 'sha256': hashlib.sha256((self.root / p).read_bytes()).hexdigest()} for p in paths],
+            'artifacts': [{'path': p, 'sha256': artifact_sha256(self.root / p)} for p in paths],
         }
 
     def validate(self):

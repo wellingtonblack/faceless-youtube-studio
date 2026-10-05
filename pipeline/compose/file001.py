@@ -1,15 +1,16 @@
-"""Reproducible picture-lock compositor for FILE #001.
+"""Reproducible, review-only picture-lock compositor for FILE #001.
 
-The module intentionally does not generate media or contact external services.
-It joins the owner-approved local source clips and renders the fictional
-full-screen anomaly interface with vendored OFL fonts.  Narration, music and
-final loudness processing are deliberately separate stages.
+The module never generates media or contacts external services. It accepts
+candidate clips only after the current v3 production gates are approved and
+renders a silent review artifact. Narration, audio mixing, QC, and any
+publishable master remain separate stages.
 """
 
 from __future__ import annotations
 
 import shutil
 import subprocess
+import json
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -43,12 +44,14 @@ SCENES = (
 def compose_file_001_picture_lock(repository_root: Path, ffmpeg: str | None = None) -> Path:
     """Render the silent visual master for FILE #001 and return its path.
 
-    Raises ``FileNotFoundError`` before rendering if any required generated
-    clip or licensed typeface is unavailable.  All on-screen strings are
+    Raises ``PermissionError`` until the v3 production gates are approved, and
+    ``FileNotFoundError`` if a required candidate clip or licensed typeface is
+    unavailable. All on-screen strings are
     written to UTF-8 text files and fed to FFmpeg through the text-file
     option, rather than an inline string option.
     """
     root = repository_root.resolve()
+    _require_production_gates(root)
     binary = _resolve_ffmpeg(ffmpeg)
     output = root / "output" / "file-001"
     clips = output / "clips"
@@ -92,6 +95,20 @@ def compose_file_001_picture_lock(repository_root: Path, ffmpeg: str | None = No
         root,
     )
     return final
+
+
+def _require_production_gates(root: Path) -> None:
+    """Refuse to create a review picture lock before current v3 approvals."""
+    manifest_path = root / "episodes" / "file-001" / "manifest.json"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise PermissionError("FILE #001 manifest is unavailable for production-gate verification") from error
+    approvals = manifest.get("approvals") if isinstance(manifest, dict) else None
+    required = ("final_script", "storyboard", "visual_interface")
+    missing = [name for name in required if not isinstance(approvals, dict) or approvals.get(name, {}).get("approved") is not True]
+    if missing:
+        raise PermissionError("FILE #001 picture lock requires v3 owner approvals: " + ", ".join(missing))
 
 
 def _write_text_assets(work: Path) -> dict[str, Path]:

@@ -71,7 +71,8 @@ budget in the handoff. Resume existing provider jobs by job ID to avoid duplicat
 ## Approval binding and revisions
 
 Operational gates use `artifacts: [{"path": "...", "sha256": "..."}]`.
-The validator checks exact bytes on disk. Do not refresh hashes under an existing
+The validator hashes Markdown, JSON and SVG after normalizing line endings to LF;
+all other artifacts, including media, use exact bytes on disk. Do not refresh hashes under an existing
 approval; edited files need renewed owner approval. Required bindings:
 
 - `final_script`: script.

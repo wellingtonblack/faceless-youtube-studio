@@ -2,7 +2,7 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from pipeline.compose.file001 import _drawtext, _write_text_assets
+from pipeline.compose.file001 import _drawtext, _write_text_assets, compose_file_001_picture_lock
 
 
 class File001ComposeTextTest(unittest.TestCase):
@@ -18,6 +18,11 @@ class File001ComposeTextTest(unittest.TestCase):
             filter_text = _drawtext(root / "font.ttf", root / "message.txt", "white", 12, "0", "0")
         self.assertIn("textfile=", filter_text)
         self.assertNotIn(":text=", filter_text)
+
+    def test_current_v3_gates_refuse_picture_lock(self) -> None:
+        root = Path(__file__).resolve().parents[2]
+        with self.assertRaisesRegex(PermissionError, "final_script, storyboard, visual_interface"):
+            compose_file_001_picture_lock(root)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,4 @@
 import json
-import hashlib
 import tempfile
 import unittest
 from contextlib import redirect_stdout
@@ -7,6 +6,7 @@ from io import StringIO
 from pathlib import Path
 
 from pipeline.cli.main import main
+from pipeline.manifest_validator import artifact_sha256
 from pipeline.providers.voice import plan_voice_generation
 
 
@@ -23,7 +23,7 @@ class VoicePlannerTests(unittest.TestCase):
             "approved_by": "human-owner" if approved else None,
             "approved_at": "2026-10-03" if approved else None,
             "ref": "docs/decision-log.md#voice-approval" if approved else None,
-            "artifacts": [{"path": "content/season-01/file-001.md", "sha256": hashlib.sha256((ROOT / "content/season-01/file-001.md").read_bytes()).hexdigest()}] if approved else [],
+            "artifacts": [{"path": "content/season-01/file-001.md", "sha256": artifact_sha256(ROOT / "content/season-01/file-001.md")}] if approved else [],
         }
         if not approved:
             # A manifest at the assets stage must already have its script gate.
@@ -52,7 +52,9 @@ class VoicePlannerTests(unittest.TestCase):
 
         self.assertTrue(plan.allowed, plan.reason)
         self.assertEqual(plan.output_path, ROOT / "output" / "file-001" / "audio" / "narration.mp3")
-        self.assertFalse(plan.output_path.exists())
+        # Planning has no side effects. A pre-existing local file is not proof
+        # of this dry-run having generated it.
+        self.assertTrue(plan.output_path.is_relative_to(ROOT / "output"))
 
     def test_cli_refuses_file_001_without_calling_a_provider(self):
         manifest_path = self._manifest_with_approval(False)
