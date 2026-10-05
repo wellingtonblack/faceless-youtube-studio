@@ -52,7 +52,11 @@ class ManifestValidatorTests(unittest.TestCase):
         self.assertTrue(_json_equal(True, True))
 
     def test_production_after_script_requires_final_script_approval(self):
-        result = self._validate(lambda manifest: manifest.update({"status": "storyboard"}))
+        def change(manifest):
+            manifest["status"] = "storyboard"
+            manifest["approvals"]["final_script"] = self._approval(approved=False)
+
+        result = self._validate(change)
         self.assert_issue_at(result, "$.approvals.final_script.approved")
 
     def test_approved_gate_requires_a_human_audit_trail(self):

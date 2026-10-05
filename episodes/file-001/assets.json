@@ -1,0 +1,53 @@
+{
+  "episode_id": "file-001",
+  "assets": [
+    {
+      "asset_id": "scene-06-moon-reveal-keyframe-v1",
+      "scene_id": "scene-06",
+      "kind": "keyframe",
+      "provider": "runway",
+      "model": "gen4_image",
+      "prompt_path": "prompts/file-001-keyframes.md#scene-06--moon-reveal-reference-frame",
+      "prompt_version": "1.0",
+      "source_keyframe": null,
+      "generation_id": "701a812c-8ee5-418b-9d83-128569140fe2",
+      "output_filename": "output/file-001/images/scene-06-moon-reveal-keyframe.png",
+      "generated_at": "2026-10-04T01:44:28.452Z",
+      "settings": {
+        "ratio": "720:1280",
+        "output_count": 1
+      },
+      "sha256": "494d522e1d85ab4ae45bb2c357d41ff708f2a9978a6131dea0ae15f3ca7cfba6"
+    },
+    {
+      "asset_id": "scene-04-normal-moon-keyframe-v1",
+      "scene_id": "scene-04",
+      "kind": "keyframe",
+      "provider": "runway",
+      "model": "gen4_image",
+      "prompt_path": "prompts/file-001-keyframes.md#scene-04--normal-moon-reference-frame",
+      "prompt_version": "1.0",
+      "source_keyframe": "scene-06-moon-reveal-keyframe-v1",
+      "generation_id": "49dd92bd-f5a0-4265-9d0e-e681c0262236",
+      "output_filename": "output/file-001/images/scene-04-normal-moon-keyframe.png",
+      "generated_at": "2026-10-04T02:25:37.923Z",
+      "settings": {"ratio": "720:1280", "output_count": 1},
+      "sha256": "abf60e5f8482b515e7bcc723fc91e6deb8e6bdcdafd3c34e495feb42f0c1675c"
+    },
+    {
+      "asset_id": "scene-06-moon-reveal-clip-v1",
+      "scene_id": "scene-06",
+      "kind": "clip",
+      "provider": "runway",
+      "model": "gen4.5",
+      "prompt_path": "prompts/file-001-keyframes.md#scene-06--moon-reveal-reference-frame",
+      "prompt_version": "1.0",
+      "source_keyframe": "scene-06-moon-reveal-keyframe-v1",
+      "generation_id": "f0c7074e-d045-4ab3-9ee9-a2246d7da589",
+      "output_filename": "output/file-001/clips/scene-06-moon-reveal.mp4",
+      "generated_at": "2026-10-04T02:43:06.487Z",
+      "settings": {"ratio": "720:1280", "duration_seconds": 5},
+      "sha256": "b6640900b7e1a60311d7c016d65d27bc6b4160d9297d7f46c44c357954c4a2a1"
+    }
+  ]
+}

@@ -75,4 +75,34 @@ A publicação pública passa a exigir **ambos**: aprovação no manifest **e** 
 
 **Motivo:** diversificar os primeiros arquivos (excesso de Lua) e fechar o roteiro do FILE #001 para produção.
 
-**Pendente do owner:** aprovar o roteiro final, o storyboard e a spec da interface; confirmar os substitutos dos slots 6 e 8.
+**Pendente do owner:** confirmar os substitutos dos slots 6 e 8.
+
+## 2026-10-03 — Storyboard do FILE #001 aprovado
+**Decisão:** aprovar o storyboard v1.1 de `production/storyboards/file-001-storyboard.md` para `Everyone Received the Same Message at 3:17 AM`.
+**Motivo:** as nove cenas preservam a continuidade de 03:17 UTC, tornam a consequência de olhar para a Lua legível e mantêm a linguagem visual cinematográfica prevista para o canal.
+
+**Próximo gate:** a interface fictícia de mensagens e seu tom sonoro ainda exigem aprovação antes da geração de assets.
+
+## 2026-10-03 — Interface de mensagens do FILE #001 aprovada
+**Decisão:** aprovar a direção da interface fictícia v1.1 em `docs/visual/anomaly-message-interface.md`, incluindo a tela preta, texto branco monoespaçado e cursor vermelho, para as cenas 02, 07 e 08.
+**Motivo:** a composição é legível em vertical, reforça a identidade de arquivo/anomalia e evita elementos que possam ser confundidos com alertas de emergência, interfaces de sistemas operacionais ou avisos governamentais.
+
+**Antes de assets:** concluir a verificação visual privada contra alertas reais e auditar o tom final para garantir que ele não se assemelhe a um sinal de atenção de emergência.
+
+## 2026-10-03 — Validação técnica da interface do FILE #001
+**Decisão:** aprovar tecnicamente a interface v1.2 para geração de assets e avançar o FILE #001 para `assets`.
+**Motivo:** o layout não contém chrome de sistema operacional, cartões de notificação, botões, rótulos de alerta, símbolos de aviso, identificação governamental ou paleta de risco. O tom da segunda mensagem foi fixado em 82 Hz + 392 Hz, sem o par 853 Hz/960 Hz nem a cadência/vibração de sinais de atenção de emergência.
+
+**Referências de validação:** documentação de alertas da Apple, Android e FCC, consultada em 2026-10-03. Nenhuma captura de tela de terceiros foi armazenada no repositório.
+
+## 2026-10-03 — Keyframe de revelação da Lua aprovada
+**Decisão:** aprovar `scene-06-moon-reveal-keyframe-v1` como âncora visual para as cenas conectadas do FILE #001.
+**Motivo:** a Lua domina o enquadramento vertical, a figura humana permanece anônima e a composição sustenta o payoff sem texto, marcas ou interface indevida.
+
+## 2026-10-03 — Continuidade da Lua normal aprovada
+**Decisão:** aprovar `scene-04-normal-moon-keyframe-v1` como contraponto visual da revelação da cena 06.
+**Motivo:** a cena mantém o mesmo ambiente e enquadramento-base, mas deixa a Lua em escala natural antes da escalada da anomalia.
+
+## 2026-10-04 — Primeiro clip do FILE #001 aprovado
+**Decisão:** aprovar `scene-06-moon-reveal-clip-v1` como o clip de revelação da Lua.
+**Motivo:** o movimento lento preserva a composição aprovada, mantém a Lua como foco dominante e entrega a escalada sem texto, marcas ou elementos de alerta.

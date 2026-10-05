@@ -1,6 +1,6 @@
 # Storyboard — FILE #001: Everyone Received the Same Message at 3:17 AM
 
-Version: 1.0 — **awaiting owner approval**
+Version: 1.1 — owner approved 2026-10-03
 Script: `content/season-01/file-001.md` v1.0
 Format: Short, 9:16, 1080×1920, target ≈ 33 s
 
@@ -107,4 +107,4 @@ This file is the **source of truth for scene count**. Each `## scene-NN` heading
 ---
 
 ## Approval
-Asset generation must not start until the owner approves this storyboard.
+Approved by the owner on 2026-10-03. Asset generation remains blocked until the anomaly-message interface is separately approved.

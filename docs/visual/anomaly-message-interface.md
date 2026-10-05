@@ -1,6 +1,6 @@
 # Anomaly Message Interface — Specification
 
-Version: 1.0 — **awaiting owner approval** (required before FILE #001 asset generation)
+Version: 1.2 — owner-approved and technically validated for FILE #001 asset generation
 Canon basis: decision D6 (`docs/proposals/2026-10-03-file-001-continuity.md`) and `docs/visual-bible.md`, "Interfaces, telas e mensagens"
 First use: FILE #001, storyboard scenes 02, 07 and 08
 
@@ -80,10 +80,14 @@ The owner directed black/white/red for this interface on 2026-10-03. The overall
 | Sound | Spec |
 |---|---|
 | First notification | short, dry, digital single tone (~200 ms), original. Many layered copies form the scene-01 cascade. |
-| **Second-message tone** | distinct and unnerving: low sub-tone bed (≈ 60–120 Hz) with a slightly detuned high partial, reversed swell (~0.8 s) into an abrupt cut, total ≈ 1.2 s. Followed by true silence. |
+| **Second-message tone** | distinct and unnerving: 82 Hz sine bed plus a 392 Hz sine partial, both with a reversed amplitude swell (~0.8 s) into an abrupt cut; total ≈ 1.2 s. No loop, cadence or vibration. Followed by true silence. |
 | Prohibited | emergency/public-warning attention signals or anything close to them; any real OS, phone-maker or carrier tone; sirens. |
 
 All sounds must be original or licensed, and recorded in the asset record with source and license.
+
+### Technical safety validation — 2026-10-03
+- **Visual:** passed. The approved full-screen composition has no operating-system chrome, notification card, buttons, alert labels, government attribution, warning icon, yellow/orange hazard palette or real-device branding. This differs structurally from the government/emergency alert surfaces documented by Apple and Android.
+- **Audio:** passed by design specification. The second-message tone is limited to 82 Hz and 392 Hz sine components, with no energy in the 853 Hz/960 Hz attention-signal pair, no repeated 2 s + 1 s + 1 s timing pattern, and no matching vibration cadence. Final export must preserve these limits.
 
 ## Production method
 - Render the interface as a **2D graphic layer** (motion graphics or FFmpeg/editor overlay) and composite it onto phone screens or use it full-frame.
@@ -98,10 +102,10 @@ Editorial overlays (`03:17:00 UTC` in scene-01, `FILE #001 — ARCHIVED` in scen
 - no block cursor, no monospace and no red.
 
 ## Approval checklist
-- [ ] Mock-up frames of messages 1 and 2 reviewed at phone size.
-- [ ] Side-by-side check against current iOS, Android and public-warning alert screens. Use private reference only; do not commit third-party screenshots.
-- [ ] Second-message tone reviewed against emergency attention signals.
-- [ ] Owner approval recorded in `docs/decision-log.md`.
+- [x] Mock-up frames of messages 1 and 2 reviewed at phone size (`docs/visual/mockups/file-001-message-01.svg` and `docs/visual/mockups/file-001-message-02.svg`).
+- [x] Side-by-side design check against current iOS, Android and public-warning alert screens; no third-party screenshots retained in the repository.
+- [x] Second-message tone audited against emergency attention-signal frequencies and cadence; production recipe fixed to 82 Hz + 392 Hz sine components.
+- [x] Owner approved the interface direction on 2026-10-03; recorded in `docs/decision-log.md`.
 
 ## Open items
 - Brand symbol (`docs/brand-bible.md`) is not designed yet. It is not used in this interface.

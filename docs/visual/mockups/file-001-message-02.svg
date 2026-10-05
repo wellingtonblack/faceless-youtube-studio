@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920" role="img" aria-label="Anomaly message interface: We saw you too">
+  <rect width="1080" height="1920" fill="#0B0B0B"/>
+  <text x="130" y="126" fill="#F4F4F4" fill-opacity=".6" font-family="IBM Plex Mono, Consolas, monospace" font-size="31" letter-spacing="1">03:17:00 UTC</text>
+  <text x="130" y="842" fill="#F4F4F4" font-family="IBM Plex Mono, Consolas, monospace" font-size="83" font-weight="700" letter-spacing="-2">WE SAW YOU TOO.<tspan fill="#E0161E">█</tspan></text>
+</svg>
