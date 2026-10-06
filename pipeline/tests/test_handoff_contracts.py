@@ -20,6 +20,13 @@ class HandoffContractTests(unittest.TestCase):
             shutil.copytree(ROOT / directory, self.root / directory)
         self.file = self.root / 'episodes/file-001/manifest.json'
         self.manifest = json.loads(self.file.read_text())
+        # Individual contract tests create their own final-QC fixtures.  The
+        # repository manifest may legitimately have a reviewed master in the
+        # ignored output directory, which this temporary workspace omits.
+        self.manifest['approvals']['final_qc'] = {
+            'approved': False, 'approved_by': None, 'approved_at': None,
+            'ref': None, 'artifacts': [],
+        }
 
     def approve(self, name, paths):
         self.manifest['approvals'][name] = {

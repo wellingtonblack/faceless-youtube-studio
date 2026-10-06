@@ -140,3 +140,10 @@ storyboard, interface, QC nem publicação. Essas aprovações continuam pendent
 **Autorização de produção:** seguir para composição, legendas e controle de qualidade, entregando um candidato final para revisão humana. Esta decisão não autoriza upload ou publicação no YouTube.
 
 **Rastreabilidade:** as três aprovações de artefatos estão vinculadas aos hashes normalizados no manifest v3. A voz é identificada pelo ID do provedor e pelo preset `neutral-storyteller-v1`; não representa o personagem The Archivist.
+
+## 2026-10-05 — QC final do FILE #001
+**Decisão do owner:** aprovar o corte final v5 de FILE #001 após o reforço do gancho inicial, legendas maiores, trilha original de suspense e encerramento reduzido.
+
+**Master aprovado:** `output/file-001/final/file-001-short.mp4` (31 s, 1080×1920, 30 fps, áudio AAC estéreo). O relatório técnico associado é `output/file-001/final/qc-report.json`.
+
+**Limite:** esta é uma aprovação de QC. Nenhum upload foi feito e `approvals.public_publish` continua `false`.
