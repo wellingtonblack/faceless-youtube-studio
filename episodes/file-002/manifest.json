@@ -1,0 +1,77 @@
+{
+  "schema_version": 3,
+  "episode_id": "file-002",
+  "file_number": 2,
+  "title": "Gravity Disappeared for 8 Seconds",
+  "format": "short",
+  "language": "en",
+  "aspect_ratio": "9:16",
+  "target_duration_seconds": 30,
+  "status": "script",
+  "series": "The Impossible Files",
+  "lore_tags": [
+    "gravity",
+    "suspended-droplet",
+    "anomaly"
+  ],
+  "script_path": "content/season-01/file-002.md",
+  "storyboard_path": "production/storyboards/file-002-storyboard.md",
+  "characters": [],
+  "voice": {
+    "provider": "elevenlabs",
+    "voice_id": null,
+    "preset": null
+  },
+  "video": {
+    "provider": "runway",
+    "model": null
+  },
+  "approvals": {
+    "final_script": {
+      "approved": false,
+      "approved_by": null,
+      "approved_at": null,
+      "ref": null,
+      "artifacts": []
+    },
+    "recurring_characters": [],
+    "lore_additions": [],
+    "final_qc": {
+      "approved": false,
+      "approved_by": null,
+      "approved_at": null,
+      "ref": null,
+      "artifacts": []
+    },
+    "public_publish": {
+      "approved": false,
+      "approved_by": null,
+      "approved_at": null,
+      "ref": null,
+      "artifacts": []
+    },
+    "storyboard": {
+      "approved": false,
+      "approved_by": null,
+      "approved_at": null,
+      "ref": null,
+      "artifacts": []
+    },
+    "visual_interface": {
+      "approved": false,
+      "approved_by": null,
+      "approved_at": null,
+      "ref": null,
+      "artifacts": []
+    }
+  },
+  "publishing": {
+    "youtube_privacy": "private",
+    "selfDeclaredMadeForKids": false,
+    "containsSyntheticMedia": true,
+    "youtube_video_id": null,
+    "published_at": null
+  },
+  "visual_interface_path": "docs/visual/file-002-gravity-treatment.md",
+  "assets_path": "episodes/file-002/assets.json"
+}
