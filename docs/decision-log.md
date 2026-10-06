@@ -147,3 +147,12 @@ storyboard, interface, QC nem publicação. Essas aprovações continuam pendent
 **Master aprovado:** `output/file-001/final/file-001-short.mp4` (31 s, 1080×1920, 30 fps, áudio AAC estéreo). O relatório técnico associado é `output/file-001/final/qc-report.json`.
 
 **Limite:** esta é uma aprovação de QC. Nenhum upload foi feito e `approvals.public_publish` continua `false`.
+
+## 2026-10-06 — Publicação do FILE #001 aprovada
+**Decisão do owner:** aprovar a mudança de visibilidade pública do primeiro vídeo do canal para buscar alcance, visualizações e inscritos.
+
+**Vídeo aprovado para publicação:** `Everyone Received the Same Message at 3:17 AM` (`FILE #001`), previamente enviado como privado com o ID `1kNqUZZvkOo`. A aprovação está vinculada ao master v5 e aos metadados de publicação congelados no manifest.
+
+**Execução:** a publicação por API continua exigindo a flag explícita `--confirm-public`; se o projeto OAuth não tiver permissão de tornar vídeos públicos, o resultado deve permanecer registrado como privado até a ação manual e verificação no YouTube Studio.
+
+**Resultado da tentativa por API:** recusada pelo YouTube com HTTP 403 em 2026-10-06, sem alteração de visibilidade. O vídeo permanece privado; a causa provável é a exigência de auditoria para projetos OAuth que publicam vídeos por API.

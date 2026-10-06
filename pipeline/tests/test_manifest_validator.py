@@ -89,7 +89,11 @@ class ManifestValidatorTests(unittest.TestCase):
         self.assert_issue_at(result, "$.publishing.youtube_video_id")
 
     def test_public_privacy_requires_human_approval(self):
-        result = self._validate(lambda manifest: manifest["publishing"].update({"youtube_privacy": "public"}))
+        def change(manifest):
+            manifest["approvals"]["public_publish"] = self._approval(approved=False)
+            manifest["publishing"].update({"youtube_privacy": "public"})
+
+        result = self._validate(change)
         self.assert_issue_at(result, "$.approvals.public_publish.approved")
 
     def test_published_private_state_is_rejected_even_with_approvals(self):

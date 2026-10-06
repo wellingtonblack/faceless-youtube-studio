@@ -7,7 +7,7 @@
   "language": "en",
   "aspect_ratio": "9:16",
   "target_duration_seconds": 33,
-  "status": "upload_private",
+  "status": "approved_for_publish",
   "series": "The Impossible Files",
   "lore_tags": [
     "03:17",
@@ -94,11 +94,20 @@
       ]
     },
     "public_publish": {
-      "approved": false,
-      "approved_by": null,
-      "approved_at": null,
-      "ref": null,
-      "artifacts": []
+      "approved": true,
+      "approved_by": "wellingtonblack",
+      "approved_at": "2026-10-06",
+      "ref": "docs/decision-log.md#2026-10-06--publicação-do-file-001",
+      "artifacts": [
+        {
+          "path": "output/file-001/final/file-001-short.mp4",
+          "sha256": "eb09329b72a8e69a4bf262ff4604f510f87a826aacd779abbb1a41052726ddf6"
+        },
+        {
+          "path": "episodes/file-001/publishing-metadata.json",
+          "sha256": "df12fe34cd2222eadd26e58ff6787cc7d4764a5a2790b0e2330b06c42b9bc8a0"
+        }
+      ]
     },
     "storyboard": {
       "approved": true,

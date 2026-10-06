@@ -1,9 +1,10 @@
 """Local OAuth 2.0 authorization for the YouTube upload adapter.
 
-This module uses a loopback callback and PKCE.  It only requests the upload
-scope, writes the resulting refresh token to the ignored local ``.env`` file,
-and never prints secrets.  Upload and publication operations intentionally do
-not exist here.
+This module uses a loopback callback and PKCE. It requests the minimum scope
+that permits the two explicit owner-controlled YouTube operations supported by
+the adapter: private upload and changing the visibility of an already-reviewed
+private upload. It writes the resulting refresh token to the ignored local
+``.env`` file and never prints secrets.
 """
 
 from __future__ import annotations
@@ -25,7 +26,10 @@ from urllib.request import Request, urlopen
 from pipeline.providers.voice.elevenlabs import load_local_env_value
 
 
-YOUTUBE_UPLOAD_SCOPE = "https://www.googleapis.com/auth/youtube.upload"
+# ``youtube.upload`` cannot update an existing video's ``status`` resource.
+# ``youtube`` is required by the documented Videos.update endpoint used by the
+# separately gated public-publication command.
+YOUTUBE_MANAGEMENT_SCOPE = "https://www.googleapis.com/auth/youtube"
 _AUTHORIZATION_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth"
 _TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token"
 
@@ -64,7 +68,7 @@ def authorize_local(repository_root: Path, *, timeout_seconds: float = 300.0) ->
             "client_id": client.client_id,
             "redirect_uri": redirect_uri,
             "response_type": "code",
-            "scope": YOUTUBE_UPLOAD_SCOPE,
+            "scope": YOUTUBE_MANAGEMENT_SCOPE,
             "access_type": "offline",
             "prompt": "consent",
             "state": state,
@@ -73,8 +77,8 @@ def authorize_local(repository_root: Path, *, timeout_seconds: float = 300.0) ->
         })
         authorization_url = f"{_AUTHORIZATION_ENDPOINT}?{query}"
         print("Opening the Google authorization page in your browser.")
-        print("Sign in to the Google account that manages the YouTube channel and approve upload access.")
-        print("No video will be uploaded and no channel settings will be changed.")
+        print("Sign in to the Google account that manages the YouTube channel and approve the requested YouTube access.")
+        print("No video will be uploaded, changed, or published during authorization.")
         if not webbrowser.open(authorization_url):
             print(f"If your browser did not open, visit this URL locally:\n{authorization_url}")
 

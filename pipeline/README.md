@@ -48,10 +48,12 @@ python -m pipeline provider youtube authorize
 python -m pipeline provider youtube verify
 ```
 
-`authorize` opens Google's owner-controlled consent page, requests only
-`https://www.googleapis.com/auth/youtube.upload`, and stores the refresh token
-only in the ignored `.env`. `verify` only exchanges that refresh token for an
-access token; it neither uploads media nor changes video visibility.
+`authorize` opens Google's owner-controlled consent page, requests
+`https://www.googleapis.com/auth/youtube` so the adapter can perform an
+explicitly approved private upload or change the visibility of that same video,
+and stores the refresh token only in the ignored `.env`. `verify` only
+exchanges that refresh token for an access token; it neither uploads media nor
+changes video visibility.
 
 After the owner has approved final QC, plan a **private-only** upload with an
 explicit fiction disclosure. The command is dry-run by default:
@@ -65,8 +67,25 @@ python -m pipeline upload file-001 --description "FILE #001 is a work of fiction
 subscriber notifications, then records the returned video ID and freezes the
 exact metadata under `episodes/<id>/`. It refuses stale QC, an existing video
 ID, non-private configuration, missing fiction disclosure, or any
-`AUTO_PUBLISH` value other than empty/`false`. Public publication remains
-unimplemented and can never be triggered by this command.
+`AUTO_PUBLISH` value other than empty/`false`.
+
+## Public publication
+
+Public publication is a separate command and is dry-run by default. It never
+uploads a new file: it changes visibility only for the existing private video
+ID recorded by the upload command.
+
+```bash
+python -m pipeline publish file-001
+python -m pipeline publish file-001 --confirm-public
+```
+
+It refuses unless the manifest is at `approved_for_publish`, final QC and the
+human `public_publish` gate are approved and pinned to the master MP4 plus the
+frozen YouTube metadata. The literal `--confirm-public` is required on the
+same invocation. If YouTube blocks API-public videos from an unaudited Google
+project, no local lifecycle state is changed; the owner may use YouTube Studio
+manually after the same manifest approval, then record and verify the result.
 
 ## Voice preflight
 

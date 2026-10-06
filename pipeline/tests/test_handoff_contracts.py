@@ -27,6 +27,10 @@ class HandoffContractTests(unittest.TestCase):
             'approved': False, 'approved_by': None, 'approved_at': None,
             'ref': None, 'artifacts': [],
         }
+        self.manifest['approvals']['public_publish'] = {
+            'approved': False, 'approved_by': None, 'approved_at': None,
+            'ref': None, 'artifacts': [],
+        }
 
     def approve(self, name, paths):
         self.manifest['approvals'][name] = {

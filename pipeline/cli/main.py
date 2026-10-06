@@ -12,9 +12,12 @@ from pipeline.compose import compose_file_001_picture_lock
 from pipeline.providers.voice import ElevenLabsClient, ElevenLabsError, plan_voice_generation
 from pipeline.providers.youtube import (
     YouTubeOAuthError,
+    YouTubePublishError,
     YouTubeUploadError,
     authorize_local,
     private_upload_plan,
+    public_publish_plan,
+    publish_public_video,
     upload_private_video,
     verify_refresh_token,
 )
@@ -43,6 +46,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         parser.error(f"'{args.command}' is reserved but not implemented yet")
     if args.command == "upload":
         return _upload_private(args)
+    if args.command == "publish":
+        return _publish_public(args)
     parser.error("choose a command")
     return 2
 
@@ -92,6 +97,13 @@ def _build_parser() -> argparse.ArgumentParser:
     upload.add_argument("--tag", action="append", default=[], help="tag to send; repeat for additional tags")
     upload.add_argument("--category-id", default="24", help="numeric YouTube category ID (default: 24, Entertainment)")
     upload.add_argument("--execute", action="store_true", help="perform the private upload; omit for a safe dry run")
+    publish = commands.add_parser("publish", help="make an approved private YouTube video public")
+    publish.add_argument("episode")
+    publish.add_argument(
+        "--confirm-public",
+        action="store_true",
+        help="required acknowledgement before changing visibility to public",
+    )
     return parser
 
 
@@ -203,6 +215,29 @@ def _upload_private(args: argparse.Namespace) -> int:
         return 1
     print(f"YOUTUBE PRIVATE UPLOAD COMPLETE: {video_id}")
     print("The manifest and frozen publishing metadata were updated. No public publishing occurred.")
+    return 0
+
+
+def _publish_public(args: argparse.Namespace) -> int:
+    try:
+        plan = public_publish_plan(REPOSITORY_ROOT, args.episode)
+    except YouTubePublishError as error:
+        print(f"YOUTUBE PUBLICATION REFUSED: {error}")
+        return 1
+    print(f"YOUTUBE PUBLICATION PLAN: {plan.episode_id}")
+    print(f"Video ID: {plan.video_id}")
+    print(f"Title: {plan.title}")
+    print("Visibility: public")
+    if not args.confirm_public:
+        print("Dry run only. Re-run with --confirm-public to make this existing private video public.")
+        return 0
+    try:
+        publish_public_video(REPOSITORY_ROOT, plan)
+    except YouTubePublishError as error:
+        print(f"YOUTUBE PUBLICATION REFUSED: {error}")
+        return 1
+    print(f"YOUTUBE PUBLICATION COMPLETE: {plan.video_id}")
+    print("YouTube confirmed public visibility. The episode manifest now records the publication time.")
     return 0
 
 
