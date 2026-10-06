@@ -165,3 +165,15 @@ storyboard, interface, QC nem publicação. Essas aprovações continuam pendent
 **Direção aprovada:** por oito segundos, gravidade desaparece; todos os objetos voltam a cair com segurança, exceto uma gota de café que continua subindo. A anomalia é independente do FILE #001: sem Lua, 03:17, mensagens, interface de telefone, personagem recorrente ou novo fato canônico.
 
 **Próximo estágio autorizado:** gerar referências visuais e planejar a voz, com registro de procedência e revisão antes de selecionar qualquer asset. Esta aprovação não autoriza geração sem os controles de custo do projeto, upload ou publicação.
+
+## 2026-10-06 — Aprovações do FILE #002
+**Decisão:** o owner aprovou o roteiro, o storyboard e a direção visual do FILE #002 `Gravity Disappeared for 8 Seconds`, nas versões exatas presas por SHA-256 em `episodes/file-002/manifest.json`:
+- `content/season-01/file-002.md` (v0.1);
+- `production/storyboards/file-002-storyboard.md` (v0.1);
+- `docs/visual/file-002-gravity-treatment.md` (v0.1).
+
+Qualquer edição posterior nesses arquivos exige nova aprovação.
+
+**Status:** o manifest avança para `storyboard`. A passagem para `assets` (geração paga de keyframes, clips, voz e som) continua dependendo de autorização explícita do owner, com armazenamento de mídia e limite de gasto definidos (`docs/file-001-handoff.md`).
+
+**Fora desta aprovação:** voz do narrador (`voice_id` nulo), QC final e publicação.
