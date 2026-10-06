@@ -156,3 +156,5 @@ storyboard, interface, QC nem publicação. Essas aprovações continuam pendent
 **Execução:** a publicação por API continua exigindo a flag explícita `--confirm-public`; se o projeto OAuth não tiver permissão de tornar vídeos públicos, o resultado deve permanecer registrado como privado até a ação manual e verificação no YouTube Studio.
 
 **Resultado da tentativa por API:** recusada pelo YouTube com HTTP 403 em 2026-10-06, sem alteração de visibilidade. O vídeo permanece privado; a causa provável é a exigência de auditoria para projetos OAuth que publicam vídeos por API.
+
+**Publicação manual verificada:** o owner publicou pelo YouTube Studio. A página pública do vídeo foi verificada sem login como reproduzível em 2026-10-06; o manifest registra a visibilidade `public` e o horário de confirmação `2026-10-06T17:03:36Z`.

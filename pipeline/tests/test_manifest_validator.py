@@ -102,6 +102,7 @@ class ManifestValidatorTests(unittest.TestCase):
             manifest["approvals"]["final_script"] = self._approval()
             manifest["approvals"]["final_qc"] = self._approval()
             manifest["approvals"]["public_publish"] = self._approval()
+            manifest["publishing"]["youtube_privacy"] = "private"
             manifest["publishing"]["youtube_video_id"] = "youtube-id"
             manifest["publishing"]["published_at"] = "2026-10-03T12:00:00Z"
 

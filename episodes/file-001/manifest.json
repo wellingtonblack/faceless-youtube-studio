@@ -7,7 +7,7 @@
   "language": "en",
   "aspect_ratio": "9:16",
   "target_duration_seconds": 33,
-  "status": "approved_for_publish",
+  "status": "published",
   "series": "The Impossible Files",
   "lore_tags": [
     "03:17",
@@ -139,11 +139,11 @@
     }
   },
   "publishing": {
-    "youtube_privacy": "private",
+    "youtube_privacy": "public",
     "selfDeclaredMadeForKids": false,
     "containsSyntheticMedia": true,
     "youtube_video_id": "1kNqUZZvkOo",
-    "published_at": null
+    "published_at": "2026-10-06T17:03:36Z"
   },
   "visual_interface_path": "docs/visual/anomaly-message-interface.md",
   "assets_path": "episodes/file-001/assets.json"

@@ -31,6 +31,10 @@ class HandoffContractTests(unittest.TestCase):
             'approved': False, 'approved_by': None, 'approved_at': None,
             'ref': None, 'artifacts': [],
         }
+        self.manifest['publishing'].update({
+            'youtube_privacy': 'private', 'youtube_video_id': None, 'published_at': None,
+        })
+        self.manifest['status'] = 'qc'
 
     def approve(self, name, paths):
         self.manifest['approvals'][name] = {
