@@ -158,3 +158,10 @@ storyboard, interface, QC nem publicação. Essas aprovações continuam pendent
 **Resultado da tentativa por API:** recusada pelo YouTube com HTTP 403 em 2026-10-06, sem alteração de visibilidade. O vídeo permanece privado; a causa provável é a exigência de auditoria para projetos OAuth que publicam vídeos por API.
 
 **Publicação manual verificada:** o owner publicou pelo YouTube Studio. A página pública do vídeo foi verificada sem login como reproduzível em 2026-10-06; o manifest registra a visibilidade `public` e o horário de confirmação `2026-10-06T17:03:36Z`.
+
+## 2026-10-06 — FILE #002: pré-produção aprovada
+**Decisão do owner:** aprovar o roteiro, o storyboard e a direção visual do FILE #002, `Gravity Disappeared for 8 Seconds`.
+
+**Direção aprovada:** por oito segundos, gravidade desaparece; todos os objetos voltam a cair com segurança, exceto uma gota de café que continua subindo. A anomalia é independente do FILE #001: sem Lua, 03:17, mensagens, interface de telefone, personagem recorrente ou novo fato canônico.
+
+**Próximo estágio autorizado:** gerar referências visuais e planejar a voz, com registro de procedência e revisão antes de selecionar qualquer asset. Esta aprovação não autoriza geração sem os controles de custo do projeto, upload ou publicação.
