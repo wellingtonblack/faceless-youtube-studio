@@ -38,6 +38,36 @@ This command reads the accessible-voices metadata only. Narration and sound
 effect generation remain deliberately unimplemented until their own explicit,
 approval-gated commands are added.
 
+## YouTube OAuth connection
+
+After setting `YOUTUBE_CLIENT_ID` and `YOUTUBE_CLIENT_SECRET` in the ignored
+local `.env`, authorize the local upload adapter:
+
+```bash
+python -m pipeline provider youtube authorize
+python -m pipeline provider youtube verify
+```
+
+`authorize` opens Google's owner-controlled consent page, requests only
+`https://www.googleapis.com/auth/youtube.upload`, and stores the refresh token
+only in the ignored `.env`. `verify` only exchanges that refresh token for an
+access token; it neither uploads media nor changes video visibility.
+
+After the owner has approved final QC, plan a **private-only** upload with an
+explicit fiction disclosure. The command is dry-run by default:
+
+```bash
+python -m pipeline upload file-001 --description "FILE #001 is a work of fiction from The Impossible Files." --tag mystery
+python -m pipeline upload file-001 --description "FILE #001 is a work of fiction from The Impossible Files." --tag mystery --execute
+```
+
+`--execute` uploads only the manifest-pinned final MP4 as `private`, disables
+subscriber notifications, then records the returned video ID and freezes the
+exact metadata under `episodes/<id>/`. It refuses stale QC, an existing video
+ID, non-private configuration, missing fiction disclosure, or any
+`AUTO_PUBLISH` value other than empty/`false`. Public publication remains
+unimplemented and can never be triggered by this command.
+
 ## Voice preflight
 
 `python -m pipeline voice <episode-id>` is a provider-neutral dry-run. It

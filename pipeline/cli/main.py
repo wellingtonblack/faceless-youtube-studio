@@ -10,6 +10,14 @@ from typing import Sequence
 from pipeline.manifest_validator import validate_manifest_file
 from pipeline.compose import compose_file_001_picture_lock
 from pipeline.providers.voice import ElevenLabsClient, ElevenLabsError, plan_voice_generation
+from pipeline.providers.youtube import (
+    YouTubeOAuthError,
+    YouTubeUploadError,
+    authorize_local,
+    private_upload_plan,
+    upload_private_video,
+    verify_refresh_token,
+)
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
@@ -25,12 +33,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _plan_voice(args)
     if args.command == "provider" and args.provider == "elevenlabs" and args.provider_command == "verify":
         return _verify_elevenlabs()
+    if args.command == "provider" and args.provider == "youtube" and args.provider_command == "authorize":
+        return _authorize_youtube()
+    if args.command == "provider" and args.provider == "youtube" and args.provider_command == "verify":
+        return _verify_youtube()
     if args.command == "compose":
         return _compose_picture_lock(args)
     if args.command in {"clips", "qc", "build"}:
         parser.error(f"'{args.command}' is reserved but not implemented yet")
     if args.command == "upload":
-        parser.error("upload is not implemented; future uploads will be private by default")
+        return _upload_private(args)
     parser.error("choose a command")
     return 2
 
@@ -62,6 +74,10 @@ def _build_parser() -> argparse.ArgumentParser:
         "verify",
         help="verify the configured key by listing voices; never generates audio",
     )
+    youtube = provider_commands.add_parser("youtube", help="YouTube OAuth authorization and token verification")
+    youtube_commands = youtube.add_subparsers(dest="provider_command")
+    youtube_commands.add_parser("authorize", help="open local OAuth consent and save a refresh token to ignored .env")
+    youtube_commands.add_parser("verify", help="verify the refresh token without accessing YouTube resources")
 
     for name in ("clips", "qc", "build"):
         stage = commands.add_parser(name, help=f"reserved for future {name} automation")
@@ -69,9 +85,13 @@ def _build_parser() -> argparse.ArgumentParser:
     compose = commands.add_parser("compose", help="render the silent FILE #001 picture lock")
     compose.add_argument("episode")
     compose.add_argument("--ffmpeg", help="explicit FFmpeg executable path")
-    upload = commands.add_parser("upload", help="reserved for future private YouTube upload")
+    upload = commands.add_parser("upload", help="upload an approved final MP4 to YouTube as private")
     upload.add_argument("episode")
     upload.add_argument("--privacy", choices=("private",), default="private")
+    upload.add_argument("--description", required=True, help="video description; must say that the video is fiction")
+    upload.add_argument("--tag", action="append", default=[], help="tag to send; repeat for additional tags")
+    upload.add_argument("--category-id", default="24", help="numeric YouTube category ID (default: 24, Entertainment)")
+    upload.add_argument("--execute", action="store_true", help="perform the private upload; omit for a safe dry run")
     return parser
 
 
@@ -131,6 +151,58 @@ def _verify_elevenlabs() -> int:
     print("ELEVENLABS VERIFIED")
     print(f"Accessible voices: {len(voices)}")
     print("No audio was generated and no output files were created.")
+    return 0
+
+
+def _authorize_youtube() -> int:
+    try:
+        authorize_local(REPOSITORY_ROOT)
+    except YouTubeOAuthError as error:
+        print(f"YOUTUBE OAUTH REFUSED: {error}")
+        return 1
+    print("YOUTUBE OAUTH AUTHORIZED")
+    print("Refresh token saved only to the ignored local .env file.")
+    print("No video was uploaded, changed, or published.")
+    return 0
+
+
+def _verify_youtube() -> int:
+    try:
+        verify_refresh_token(REPOSITORY_ROOT)
+    except YouTubeOAuthError as error:
+        print(f"YOUTUBE OAUTH REFUSED: {error}")
+        return 1
+    print("YOUTUBE OAUTH VERIFIED")
+    print("The refresh token obtained an access token; no YouTube resource was accessed or changed.")
+    return 0
+
+
+def _upload_private(args: argparse.Namespace) -> int:
+    try:
+        plan = private_upload_plan(
+            REPOSITORY_ROOT,
+            args.episode,
+            description=args.description,
+            tags=tuple(args.tag),
+            category_id=args.category_id,
+        )
+    except YouTubeUploadError as error:
+        print(f"YOUTUBE UPLOAD REFUSED: {error}")
+        return 1
+    print(f"YOUTUBE PRIVATE UPLOAD PLAN: {plan.episode_id}")
+    print(f"Video: {plan.video_path.relative_to(REPOSITORY_ROOT)}")
+    print(f"Title: {plan.title}")
+    print("Privacy: private; subscriber notifications: disabled")
+    if not args.execute:
+        print("Dry run only. Re-run with --execute to upload this exact reviewed MP4 privately.")
+        return 0
+    try:
+        video_id = upload_private_video(REPOSITORY_ROOT, plan)
+    except YouTubeUploadError as error:
+        print(f"YOUTUBE UPLOAD REFUSED: {error}")
+        return 1
+    print(f"YOUTUBE PRIVATE UPLOAD COMPLETE: {video_id}")
+    print("The manifest and frozen publishing metadata were updated. No public publishing occurred.")
     return 0
 
 
